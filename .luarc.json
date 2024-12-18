@@ -1,0 +1,7 @@
+
+{
+  "workspace.library": ["/home/sultan/git/nvim-cc-lib/"],
+  "runtime.version": "Lua 5.3",
+  "hint.enable": false
+}
+
