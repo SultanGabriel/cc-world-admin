@@ -5,7 +5,7 @@ Hello! This is the repository for my ComputerCraft: Tweaked project, World Admin
 ## Disclaimer
 This project is still in its early stages of development. As such, it is not recommended to use this in any environmennt. As of now only a part of the UI is working as a proof of concept and some utilities are set up, but not fully implemented.
 
-We'll see how this goes! It may be a while before this project is fully functional, but what you gonna do? ¯\_(ツ)_/¯
+We'll see how this goes! It may be a while before this project is fully functional, but what you gonna do? ¯\\_(ツ)_/¯
 
 ## Dependencies:
 
