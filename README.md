@@ -7,10 +7,10 @@ This project is still in its early stages of development. As such, it is not rec
 
 We'll see how this goes! It may be a while before this project is fully functional, but what you gonna do? ¯\_(ツ)_/¯
 
-#### Dependencies:
+## Dependencies:
 
 - ComputerCraft: Tweaked (Forge: 1.20.1)
 - UI Framework: [Basalt](https://github.com/Pyroxenium/Basalt)
 
-##### Notes:
+## Notes:
 - Here's my rough plan for this project: [Vision](VISION.md)
