@@ -1,4 +1,5 @@
 package.path = package.path .. ";../common/utils/?.lua"
+package.path = package.path .. ";../../libs/basalt/init.lua"
 
 local config = require("config")
 local ServerMethods = require("controllers.ServerMethods")
