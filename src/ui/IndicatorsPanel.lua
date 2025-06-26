@@ -13,7 +13,7 @@ function Panel.new(app, x, y, width, title, indicatorsConfig)
     self.container = app:addFrame()
         :setPosition(x, y)
         :setSize(width, #indicatorsConfig + 2)
-        :setBackground(colors.gray)
+        :setBackground(colors.lightGray)
         --:setBorder(colors.lightGray)
 
     self.titleLabel = self.container:addLabel()

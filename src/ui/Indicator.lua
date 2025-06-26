@@ -47,7 +47,7 @@ function Indicator:setState(state)
     if state == "active" then
         self.dot:setBackground(self.color)
     elseif state == "inactive" then
-        self.dot:setBackground(colors.gray)
+        self.dot:setBackground(colors.black)
     elseif state == "intermittent" then
         -- handled by updateBlink()
     end
