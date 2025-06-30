@@ -1,60 +1,48 @@
 local basalt = require("lib.basalt")
-local TankComponent = require("ui.TankComponent")
-local Indicator = require("ui.Indicator")
-local IndicatorsPanel = require("ui.IndicatorsPanel")
-local MonitorSelector = require("ui.MonitorSelector")
+local MainView = require("ui.views.MainView")
 
 local selectedMonitor = nil
-local components = {}
+local views = {}
 
-local function updateLoop()
-	while true do
-		for _, comp in ipairs(components) do
-			if comp.update then
-				comp:update()
-			end
-		end
-	end
-end
+CANVAS = nil
+local MONITOR_MAIN = "monitor_1"
+local MONITOR_INPUT = "monitor_2"
+local MONITOR_ENERGY = "monitor_3"
+local MONITOR_STATS = "monitor_4"
 
-local MONITOR_ID = "monitor_1"
-local function initApp()
-	local monitor = peripheral.wrap(MONITOR_ID)
+local function initMainScreen()
+	local monitor = peripheral.wrap(MONITOR_MAIN)
 	if not monitor then
-		error("Monitor not found: " .. MONITOR_ID)
+		error("Monitor not found: " .. MONITOR_MAIN)
 	end
 
-	local app = basalt.createFrame():setTerm(monitor)
-	local monW, monH = monitor.getSize()
-	app:setSize(monW, monH)
-	app:setBackground(colors.gray)
+  local monitorInput = peripheral.wrap(MONITOR_INPUT)
+  if monitorInput then
+    local inputView = MainView.new(basalt.createFrame():setTerm(monitorInput))
+    table.insert(views, inputView)
+  end
 
-	app:addLabel():setText("Tschernobyl Fissile Fuel Management System"):setPosition(2, 2):setForeground(colors.white)
+	local B = basalt.createFrame():setTerm(monitor)
 
-	local tanks = { peripheral.find("dynamicValve") }
-	local x, y = 2, 3
-	local tankHeight, spacing = 6, 1
+  B:setSize(monitor.getSize())
 
-	for _, tank in ipairs(tanks) do
-		local tankComp = TankComponent.new(app, tank, x, y, monW - 2, tankHeight)
-		table.insert(components, tankComp)
-		y = y + tankHeight + spacing
-	end
+  local mainView = MainView.new(B)
 
-	-- local status = Indicator.new(app, 2, 16, "Fueling", colors.yellow)
-	-- status:setState("intermittent")
-	-- table.insert(components, status)
+  table.insert(views, mainView)
 
-	-- local panel = IndicatorsPanel.new(app, 16, 12, 24, "System Status", {
-	-- 	{ label = "Sugi Pula", color = colors.yellow, state = "intermittent" },
-	-- 	{ label = "Muie", color = colors.green, state = "active" },
-	-- 	{ label = "Da mue tie ma", color = colors.pink, state = "intermittent" },
-	-- 	{ label = "hhahaha", color = colors.red, state = "inactive" },
-	-- 	{ label = "Fueling", color = colors.yellow, state = "intermittent" },
-	-- })
-	-- table.insert(components, panel)
-	--parallel.waitForAny(updateLoop)
+
+
+
+	-- local monW, monH = monitor.getSize()
+	-- app:setSize(monW, monH)
+	-- app:setBackground(colors.gray)
+	--
+	-- app:addLabel():setText("TESTTESTEST"):setPosition(2, 2):setForeground(colors.pink)
+
+	-- CANVAS = app:getCanvas()
 end
+
+
 
 local function init()
 	-- local frame = basalt.getMainFrame()
@@ -62,7 +50,8 @@ local function init()
 	-- frame:setBackground(colors.gray)
 	--
 	-- frame:addLabel():setText("Chernobyl Fissile Fuel Management System"):setPosition(2, 2):setForeground(colors.white)
-	initApp()
+
+	initMainScreen()
 
 	-- MonitorSelector.select(frame, function(monitor)
 	-- 	if monitor then
@@ -76,10 +65,27 @@ init()
 -- basalt.run()
 -- parallel.waitForAny(updateLoop)
 parallel.waitForAny(
-	-- function() end,
 	function()
-		-- updateLoop()
-	end
+    for _, view in ipairs(views) do
+      view:update()
+    end
+  end
+	-- function()
+	-- 	-- updateLoop(),
+	-- 	-- if CANVAS then
+	-- 	-- 	CANVAS:line(1, 1, 10, 10, " ", colors.red, colors.green)
+	-- 	--
+	-- 	-- 	CANVAS:addCommand(function()
+	-- 	-- 		-- Draw red text on black background
+	-- 	-- 		CANVAS:drawText(1, 1, "Hello")
+	-- 	-- 		CANVAS:drawFg(1, 1, colors.red)
+	-- 	-- 		CANVAS:drawBg(1, 1, colors.black)
+	-- 	--
+	-- 	-- 		-- Or use blit for more efficient drawing
+	-- 	-- 		CANVAS:blit(1, 2, "Hello", "fffff", "00000") -- white on black
+	-- 	-- 	end)
+	-- 	end
+	-- end
 	--function() basalt.autoUpdate() end
 )
 basalt.run()

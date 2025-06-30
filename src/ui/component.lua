@@ -1,4 +1,4 @@
--- lib/component.lua
+-- ui/component.lua
 local Component = {}
 Component.__index = Component
 

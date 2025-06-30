@@ -1,4 +1,4 @@
--- components/indicators_panel.lua
+-- ui/indicators_panel.lua
 local Component = require("ui.component")
 local Indicator = require("ui.Indicator")
 
