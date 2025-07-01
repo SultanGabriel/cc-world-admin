@@ -1,4 +1,4 @@
-local basalt = require("lib.basalt")
+local basalt = require("lib.basalt.release.basalt")
 local MainView = require("ui.views.MainView")
 local InputView = require("ui.views.InputView")
 

@@ -18,54 +18,44 @@ function MainView.new(B)
 
 	B:setBackground(theme.backgroundColor)
 
-  -- === Header ===
-  local fHeader = B:addFrame()
-    :setPosition(1, 1)
-    :setSize(monW, 2)
-    :setBackground(theme.headerBackgroundColor)
-        
-	fHeader:addLabel()
+	-- === Header ===
+	local fHeader = B:addFrame():setPosition(1, 1):setSize(monW, 2):setBackground(theme.headerBackgroundColor)
+
+	fHeader
+		:addLabel()
 		:setText("GregTech Factory Central Monitoring System")
 		:setPosition(monW / 2 - 20, 1)
 		:setForeground(colors.white)
 
-  fHeader:addLabel()
-    :setText(os.date("%H:%M:%S"))
-    :setPosition(monW - 10, 1)
-    :setForeground(colors.white)
+	fHeader:addLabel():setText(os.date("%H:%M:%S")):setPosition(monW - 10, 1):setForeground(colors.white)
 
-  -- === Main ===
-  local sideW = 30
-  local bottomH = 10
+	-- === Main ===
+	local sideW = 30
+	local bottomH = 8
 
-  local fMain = ExperimentalFrame.new(B, 1, 3, monW - sideW, monH - bottomH )
+	-- local fMain = ExperimentalFrame.new(B, 1, 3, monW - sideW, monH - bottomH )
+	local fMain = ExperimentalFrame.new(B, 1, 3, monW, monH - bottomH)
 
-  fMain:getContainer()
-    :addLabel()
-    :setText("Main Control Panel")
-    :setPosition(2, 1)
+	fMain:getContainer():addLabel():setText("Main Control Panel"):setPosition(2, 1)
+	-- local canvasBox = fMain:getContainer():addFrame():setSize(20, 10):setBackground(colors.black)
 
-  local canvas = fMain:getContainer():addCanvas()
-    :setPosition(2, 3)
-    :setSize(monW - sideW - 2, monH - bottomH - 3)
-    :setBackground(colors.lightGray)
-  
-  -- === Side Panel ===
-  local fSide = ExperimentalFrame.new(B, monW - sideW + 1, 3, sideW, monH - bottomH)
-  fSide:getContainer()
-    :addLabel()
-    :setText("System Status")
-    :setPosition(2, 1)
+	-- Draw with canvas
+	-- canvasBox.getCanvas()
+	--     canvas:line(1, 1, 10, 10, "*", colors.red, colors.black) -- Draws a red line
+	-- :rect(1, 1, 10, 3, "=", colors.red, colors.black)  -- rectangle
+	-- :text(2, 2, "Hi!", colors.white, colors.black)     -- text
+	-- :line(1, 5, 15, 9, ".", colors.green, colors.blue) -- line
 
-  -- === Bottom Panel ===
-  local fBottom = ExperimentalFrame.new(B, 1, monH - bottomH + 1, monW, bottomH)
-  fBottom:getContainer()
-    :addLabel()
-    :setText("Footer Information")
-    :setPosition(2, 1)
+	-- -- === Side Panel ===
+	-- local fSide = ExperimentalFrame.new(B, monW - sideW + 1, 3, sideW, monH - bottomH)
+	-- fSide:getContainer()
+	--   :addLabel()
+	--   :setText("System Status")
+	--   :setPosition(2, 1)
 
-
-
+	-- === Bottom Panel ===
+	local fBottom = ExperimentalFrame.new(B, 1, monH - bottomH + 1, monW, bottomH)
+	fBottom:getContainer():addLabel():setText("Footer Information"):setPosition(2, 1)
 
 	return self
 end
@@ -78,36 +68,35 @@ end
 
 return MainView
 
-
-------------	MUITZA SUGI PULA SI HAI SA NU NE CACAM PE NOI 
+------------	MUITZA SUGI PULA SI HAI SA NU NE CACAM PE NOI
 ----- local bfMain = BorderedFrame.new(B, 2, 2, 50, 12)
-	--
-	-- local fMain = bfMain:getContainer()
-	--
-	-- fMain:addLabel():setText("Main Control Panel"):setPosition(2, 2):setBackground(colors.lightGray)
-	--
-	-- local fancy = ExperimentalFrame.new(B, 2, 13, 50, 10):setBorderColor(colors.lightGray)
-	-- -- :setBackground(colors.white)
-	--
-	-- fancy
-	-- 	:getContainer()
-	-- 	:addLabel()
-	-- 	:setText("Inside the experimental frame")
-	-- 	:setPosition(2, 11)
-	-- 	:setSize(30, 10)
-	-- 	:setForeground(colors.black)
-	-- fMain:addLabel()
-	-- :setText("Main Control Panel")
-	-- :setPosition(2, 1)
-	--
+--
+-- local fMain = bfMain:getContainer()
+--
+-- fMain:addLabel():setText("Main Control Panel"):setPosition(2, 2):setBackground(colors.lightGray)
+--
+-- local fancy = ExperimentalFrame.new(B, 2, 13, 50, 10):setBorderColor(colors.lightGray)
+-- -- :setBackground(colors.white)
+--
+-- fancy
+-- 	:getContainer()
+-- 	:addLabel()
+-- 	:setText("Inside the experimental frame")
+-- 	:setPosition(2, 11)
+-- 	:setSize(30, 10)
+-- 	:setForeground(colors.black)
+-- fMain:addLabel()
+-- :setText("Main Control Panel")
+-- :setPosition(2, 1)
+--
 
-	-- :setPosition(1, 2)
-	-- :setSize(monW - 2, monH - 3)
-	-- B.addChild(fMain)
+-- :setPosition(1, 2)
+-- :setSize(monW - 2, monH - 3)
+-- B.addChild(fMain)
 
-	-- local indicators = IndicatorsPanel.new(app, 2, 2, 30, "System Status", {
-	--     { label = "Pump", color = colors.red, state = "inactive" },
-	--     { label = "Heater", color = colors.orange, state = "active" },
-	--     { label = "Cooler", color = colors.blue, state = "inactive" }
-	-- })
-	-- table.insert(self.components, indicators)
+-- local indicators = IndicatorsPanel.new(app, 2, 2, 30, "System Status", {
+--     { label = "Pump", color = colors.red, state = "inactive" },
+--     { label = "Heater", color = colors.orange, state = "active" },
+--     { label = "Cooler", color = colors.blue, state = "inactive" }
+-- })
+-- table.insert(self.components, indicators)
