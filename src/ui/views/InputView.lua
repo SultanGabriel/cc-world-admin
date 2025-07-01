@@ -5,12 +5,12 @@ local ExperimentalFrame = require("ui.ExperimentalFrame")
 
 local theme = require("common.theme")
 
-local MainView = {}
-MainView.__index = MainView
-setmetatable(MainView, { __index = Component })
+local InputView = {}
+InputView.__index = InputView
+setmetatable(InputView, { __index = Component })
 
-function MainView.new(B)
-	local self = setmetatable(Component.new(), MainView)
+function InputView.new(B)
+	local self = setmetatable(Component.new(), InputView)
 
 	self.components = {}
 
@@ -25,58 +25,68 @@ function MainView.new(B)
     :setBackground(theme.headerBackgroundColor)
         
 	fHeader:addLabel()
-		:setText("GregTech Factory Central Monitoring System")
-		:setPosition(monW / 2 - 20, 1)
+		:setText("GregTech Factory - Command Center")
+		:setPosition(monW / 2 - 16, 1)
 		:setForeground(colors.white)
 
-  fHeader:addLabel()
-    :setText(os.date("%H:%M:%S"))
-    :setPosition(monW - 10, 1)
-    :setForeground(colors.white)
+
+
+  -- fHeader:addLabel()
+  --   :setText(os.date("%H:%M:%S"))
+  --   :setPosition(monW - 10, 1)
+  --   :setForeground(colors.white)
 
   -- === Main ===
-  local sideW = 30
-  local bottomH = 10
+  local fMain = ExperimentalFrame.new(B, 1, 3, monW , monH )
+  local mainContainer = fMain:getContainer()
 
-  local fMain = ExperimentalFrame.new(B, 1, 3, monW - sideW, monH - bottomH )
-
-  fMain:getContainer()
-    :addLabel()
-    :setText("Main Control Panel")
+  local btnOne = mainContainer:addButton()
+    :setText("Start Process")
     :setPosition(2, 1)
+    :setSize(29, 1)
+  :setBackground(colors.green)
+  :onClick(function(button, x, y)
+    print("Process started!")
+    print("Button clicked at: " .. x .. ", " .. y)
 
-  local canvas = fMain:getContainer():addCanvas()
-    :setPosition(2, 3)
-    :setSize(monW - sideW - 2, monH - bottomH - 3)
-    :setBackground(colors.lightGray)
+  end)
   
-  -- === Side Panel ===
-  local fSide = ExperimentalFrame.new(B, monW - sideW + 1, 3, sideW, monH - bottomH)
-  fSide:getContainer()
-    :addLabel()
-    :setText("System Status")
-    :setPosition(2, 1)
-
-  -- === Bottom Panel ===
-  local fBottom = ExperimentalFrame.new(B, 1, monH - bottomH + 1, monW, bottomH)
-  fBottom:getContainer()
-    :addLabel()
-    :setText("Footer Information")
-    :setPosition(2, 1)
-
-
-
+  mainContainer    :addButton()
+    :setText("Stop Process")
+    :setPosition(2, 3)
+    :setSize(29, 1)
+  :setBackground(colors.red)
+  
+  -- fMain:getContainer()
+  --   :addLabel()
+  --   :setText("Main Control Panel")
+  --   :setPosition(2, 1)
+  -- 
+  -- -- === Side Panel ===
+  -- local fSide = ExperimentalFrame.new(B, monW - sideW + 1, 3, sideW, monH - bottomH)
+  -- fSide:getContainer()
+  --   :addLabel()
+  --   :setText("System Status")
+  --   :setPosition(2, 1)
+  --
+  -- -- === Bottom Panel ===
+  -- local fBottom = ExperimentalFrame.new(B, 1, monH - bottomH + 1, monW, bottomH)
+  -- fBottom:getContainer()
+  --   :addLabel()
+  --   :setText("Footer Information")
+  --   :setPosition(2, 1)
+  --
 
 	return self
 end
 
-function MainView:update()
+function InputView:update()
 	for _, c in ipairs(self.components) do
 		c:update()
 	end
 end
 
-return MainView
+return InputView
 
 
 ------------	MUITZA SUGI PULA SI HAI SA NU NE CACAM PE NOI 

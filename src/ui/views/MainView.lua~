@@ -16,71 +16,16 @@ function MainView.new(B)
 
 	local monW, monH = B:getSize()
 
-	B:setBackground(theme.backgroundColor)
+	B:setBackground(theme.backroundColog)
 
   -- === Header ===
-  local fHeader = B:addFrame()
-    :setPosition(1, 1)
-    :setSize(monW, 2)
-    :setBackground(theme.headerBackgroundColor)
-        
-	fHeader:addLabel()
+  
+	B:addLabel()
 		:setText("GregTech Factory Central Monitoring System")
 		:setPosition(monW / 2 - 20, 1)
 		:setForeground(colors.white)
 
-  fHeader:addLabel()
-    :setText(os.date("%H:%M:%S"))
-    :setPosition(monW - 10, 1)
-    :setForeground(colors.white)
-
-  -- === Main ===
-  local sideW = 30
-  local bottomH = 10
-
-  local fMain = ExperimentalFrame.new(B, 1, 3, monW - sideW, monH - bottomH )
-
-  fMain:getContainer()
-    :addLabel()
-    :setText("Main Control Panel")
-    :setPosition(2, 1)
-
-  local canvas = fMain:getContainer():addCanvas()
-    :setPosition(2, 3)
-    :setSize(monW - sideW - 2, monH - bottomH - 3)
-    :setBackground(colors.lightGray)
-  
-  -- === Side Panel ===
-  local fSide = ExperimentalFrame.new(B, monW - sideW + 1, 3, sideW, monH - bottomH)
-  fSide:getContainer()
-    :addLabel()
-    :setText("System Status")
-    :setPosition(2, 1)
-
-  -- === Bottom Panel ===
-  local fBottom = ExperimentalFrame.new(B, 1, monH - bottomH + 1, monW, bottomH)
-  fBottom:getContainer()
-    :addLabel()
-    :setText("Footer Information")
-    :setPosition(2, 1)
-
-
-
-
-	return self
-end
-
-function MainView:update()
-	for _, c in ipairs(self.components) do
-		c:update()
-	end
-end
-
-return MainView
-
-
-------------	MUITZA SUGI PULA SI HAI SA NU NE CACAM PE NOI 
------ local bfMain = BorderedFrame.new(B, 2, 2, 50, 12)
+	-- local bfMain = BorderedFrame.new(B, 2, 2, 50, 12)
 	--
 	-- local fMain = bfMain:getContainer()
 	--
@@ -103,7 +48,7 @@ return MainView
 
 	-- :setPosition(1, 2)
 	-- :setSize(monW - 2, monH - 3)
-	-- B.addChild(fMain)
+	B.addChild(fMain)
 
 	-- local indicators = IndicatorsPanel.new(app, 2, 2, 30, "System Status", {
 	--     { label = "Pump", color = colors.red, state = "inactive" },
@@ -111,3 +56,14 @@ return MainView
 	--     { label = "Cooler", color = colors.blue, state = "inactive" }
 	-- })
 	-- table.insert(self.components, indicators)
+
+	return self
+end
+
+function MainView:update()
+	for _, c in ipairs(self.components) do
+		c:update()
+	end
+end
+
+return MainView

@@ -1,4 +1,7 @@
 local Component = require("ui.component")
+
+local theme = require("common.theme")
+
 local ExperimentalFrame = {}
 ExperimentalFrame.__index = ExperimentalFrame
 setmetatable(ExperimentalFrame, { __index = Component })
@@ -6,8 +9,8 @@ setmetatable(ExperimentalFrame, { __index = Component })
 function ExperimentalFrame.new(app, x, y, w, h)
 	local self = setmetatable(Component.new(), ExperimentalFrame)
 
-	self.borderColor = colors.black
-	self.backgroundColor = colors.lightGray
+	self.borderColor = theme.borderColor or colors.black
+	self.backgroundColor = theme.backgroundColor or colors.lightGray
 	self.x = x
 	self.y = y
 	self.w = w

@@ -1,5 +1,6 @@
 local basalt = require("lib.basalt")
 local MainView = require("ui.views.MainView")
+local InputView = require("ui.views.InputView")
 
 local selectedMonitor = nil
 local views = {}
@@ -18,7 +19,7 @@ local function initMainScreen()
 
   local monitorInput = peripheral.wrap(MONITOR_INPUT)
   if monitorInput then
-    local inputView = MainView.new(basalt.createFrame():setTerm(monitorInput))
+    local inputView = InputView.new(basalt.createFrame():setTerm(monitorInput))
     table.insert(views, inputView)
   end
 

@@ -1,13 +1,17 @@
 local Component = require("ui.component")
+local theme = require("common.theme")
+
+
 local BorderedFrame = {}
 BorderedFrame.__index = BorderedFrame
 setmetatable(BorderedFrame, { __index = Component })
 
+
 function BorderedFrame.new(app, x, y, w, h)
 	local self = setmetatable(Component.new(), BorderedFrame)
 
-	self.borderColor = colors.black
-	self.backgroundColor = colors.gray
+	self.borderColor = theme.borderColor or colors.black
+	self.backgroundColor = theme.backgroundColor or colors.lightGray
 
 	-- Outer frame (for border)
 	self.frame = app:addFrame()
