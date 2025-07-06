@@ -6,7 +6,7 @@ Indicator.__index = Indicator
 setmetatable(Indicator, { __index = Component })
 
 function Indicator.new(app, x, y, labelText, color, labelRight)
-	local self = setmetatable(Component.new(app), Indicator)
+	local self = setmetatable(Component.new(), Indicator)
 
 	self.color = color or colors.green
 	self.labelText = labelText or "Status"

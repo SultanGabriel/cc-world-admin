@@ -1,5 +1,6 @@
 -- ui/views/MainView
 local Component = require("ui.component")
+local Clock = require("ui.ClockComponent")
 local BorderedFrame = require("ui.BorderedFrame")
 local ExperimentalFrame = require("ui.ExperimentalFrame")
 
@@ -21,13 +22,28 @@ function MainView.new(B)
 	-- === Header ===
 	local fHeader = B:addFrame():setPosition(1, 1):setSize(monW, 2):setBackground(theme.headerBackgroundColor)
 
-	fHeader
-		:addLabel()
-		:setText("GregTech Factory Central Monitoring System")
-		:setPosition(monW / 2 - 20, 1)
-		:setForeground(colors.white)
+	fHeader:addLabel({
+		x = monW / 2 - 20,
+		y = 1,
+		text = "GregTech Factory Central Monitoring System",
+		foreground = colors.white,
+	})
+	-- :setText("GregTech Factory Central Monitoring System")
+	-- :setPosition(monW / 2 - 20, 1)
+	-- :setForeground(colors.white)
 
-	fHeader:addLabel():setText(os.date("%H:%M:%S")):setPosition(monW - 10, 1):setForeground(colors.white)
+	-- fHeader:addLabel({
+	-- 	x = monW - 10,
+	-- 	y = 1,
+	-- 	text = os.date("%H:%M:%S"),
+	-- })
+
+  local clock = Clock.new(fHeader, monW - 10, 1)
+  table.insert(self.components, clock)
+
+	-- canvas:text(1, 1, "Hello Canvas!", 1, 32768)
+	-- canvas:line(1, 1, monW, 1, "-", colors.white, colors.pink)
+	-- :setText(os.date("%H:%M:%S")):setPosition(monW - 10, 1):setForeground(colors.white)
 
 	-- === Main ===
 	local sideW = 30
@@ -56,6 +72,27 @@ function MainView.new(B)
 	-- === Bottom Panel ===
 	local fBottom = ExperimentalFrame.new(B, 1, monH - bottomH + 1, monW, bottomH)
 	fBottom:getContainer():addLabel():setText("Footer Information"):setPosition(2, 1)
+
+
+-- 	local canvasPlugin = require("lib.basalt.src.plugins.canvas")
+-- 	local Canvas = canvasPlugin.API
+-- 	
+--   self.canvas = Canvas.new(B)
+--   if self.canvas then
+--     self.canvas:text(1, 1, "Hello Canvas!", 1, 32768)
+-- -- Draw a horizontal line near the top
+-- self.canvas:line(2, 2, 20, 2, "-", colors.red, colors.black)
+--
+-- -- Draw a rectangle somewhere below
+-- self.canvas:rect(5, 5, 10, 4, "#", colors.yellow, colors.blue)
+--
+-- -- Draw another diagonal line
+-- self.canvas:line(5, 10, 30, 15, "/", colors.green, colors.black)
+--
+--   else
+--     error("Canvas plugin not found or failed to initialize.")
+--   end
+
 
 	return self
 end

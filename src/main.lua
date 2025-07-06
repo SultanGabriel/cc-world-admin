@@ -1,6 +1,7 @@
-local basalt = require("lib.basalt.release.basalt")
+local basalt = require("lib.basalt.src")
 local MainView = require("ui.views.MainView")
 local InputView = require("ui.views.InputView")
+local EnergyView = require("ui.views.EnergyView")
 
 local selectedMonitor = nil
 local views = {}
@@ -17,23 +18,40 @@ local function initMainScreen()
 		error("Monitor not found: " .. MONITOR_MAIN)
 	end
 
-  local monitorInput = peripheral.wrap(MONITOR_INPUT)
-  if monitorInput then
-    local inputView = InputView.new(basalt.createFrame():setTerm(monitorInput))
-    table.insert(views, inputView)
-  end
+	local monitorInput = peripheral.wrap(MONITOR_INPUT)
+	if monitorInput then
+		local inputView = InputView.new(basalt.createFrame():setTerm(monitorInput))
+		table.insert(views, inputView)
+	end
+
+	local monitorEnergy = peripheral.wrap(MONITOR_ENERGY)
+	if monitorEnergy then
+		local energyView = EnergyView.new(basalt.createFrame():setTerm(monitorEnergy))
+		table.insert(views, energyView)
+	end
 
 	local B = basalt.createFrame():setTerm(monitor)
 
-  B:setSize(monitor.getSize())
+	B:setSize(monitor.getSize())
 
-  local mainView = MainView.new(B)
+	local mainView = MainView.new(B)
 
-  table.insert(views, mainView)
+	table.insert(views, mainView)
 
-
-
-
+	-- local mAIN = basalt.createFrame():setTerm(monitorEnergy)
+	-- local canvas = mAIN:getCanvas()
+	-- -- canvas:bg(1, 1, colors.blue)
+	-- canvas:line(1, 1, 10, 10, "*", colors.red, colors.green)
+	--
+	-- canvas:line(2, 2, 20, 2, "-", colors.red, colors.black)
+	--
+	-- -- Draw a rectangle somewhere below
+	-- canvas:rect(5, 5, 10, 4, "#", colors.yellow, colors.blue)
+	--
+	-- -- Draw another diagonal line
+	-- canvas:line(5, 10, 30, 15, "/", colors.green, colors.black)
+	-- canvas:ellipse(10, 10, 5, 3, "@", colors.green, colors.black) -- Creates an ellipse
+	--
 	-- local monW, monH = monitor.getSize()
 	-- app:setSize(monW, monH)
 	-- app:setBackground(colors.gray)
@@ -42,8 +60,6 @@ local function initMainScreen()
 
 	-- CANVAS = app:getCanvas()
 end
-
-
 
 local function init()
 	-- local frame = basalt.getMainFrame()
@@ -66,27 +82,19 @@ init()
 -- basalt.run()
 -- parallel.waitForAny(updateLoop)
 parallel.waitForAny(
+	-- View update loop
 	function()
-    for _, view in ipairs(views) do
-      view:update()
-    end
-  end
-	-- function()
-	-- 	-- updateLoop(),
-	-- 	-- if CANVAS then
-	-- 	-- 	CANVAS:line(1, 1, 10, 10, " ", colors.red, colors.green)
-	-- 	--
-	-- 	-- 	CANVAS:addCommand(function()
-	-- 	-- 		-- Draw red text on black background
-	-- 	-- 		CANVAS:drawText(1, 1, "Hello")
-	-- 	-- 		CANVAS:drawFg(1, 1, colors.red)
-	-- 	-- 		CANVAS:drawBg(1, 1, colors.black)
-	-- 	--
-	-- 	-- 		-- Or use blit for more efficient drawing
-	-- 	-- 		CANVAS:blit(1, 2, "Hello", "fffff", "00000") -- white on black
-	-- 	-- 	end)
-	-- 	end
-	-- end
-	--function() basalt.autoUpdate() end
+		while true do
+			for _, view in ipairs(views) do
+				-- print("Updating view: " .. tostring(view))
+				view:update()
+			end
+			sleep(1)
+		end
+	end,
+
+	-- Basalt update loop
+	function()
+		basalt.run()
+	end
 )
-basalt.run()
