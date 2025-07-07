@@ -1,3 +1,3 @@
-[submodule "libs/basalt"]
-	path = libs/basalt
-	url = https://github.com/Pyroxenium/Basalt
+[submodule "src/lib/basalt"]
+	path = src/lib/basalt
+	url = https://github.com/Pyroxenium/Basalt2.git

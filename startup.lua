@@ -1,0 +1,3 @@
+
+shell.run("src/main")
+
