@@ -3,8 +3,57 @@ local Component = require("ui.component")
 local Clock = require("ui.ClockComponent")
 local BorderedFrame = require("ui.BorderedFrame")
 local ExperimentalFrame = require("ui.ExperimentalFrame")
+local Door = require("ui.Door")
+
+local MEController = require("ui.widgets.MEController")
+local DOORWAYS = require("config").Doorways
 
 local theme = require("common.theme")
+
+---
+-- local Doorways = {
+-- 	D_00 = {
+-- 		id = "0",
+-- 		name = "Main Entrance",
+-- 		x = 18,
+-- 		y = 1,
+-- 		w = 4,
+-- 		h = 1,
+-- 	},
+-- 	D_01 = {
+-- 		id = "1",
+-- 		name = "ME Controller",
+-- 		x = 17,
+-- 		y = 3,
+-- 		w = 1,
+-- 		h = 3,
+-- 	},
+-- 	D_02 = {
+-- 		id = "2",
+-- 		name = "ME Server Room",
+-- 		x = 34,
+-- 		y = 8,
+-- 		w = 3,
+-- 		h = 1,
+-- 	},
+-- 	D_03 = {
+-- 		id = "3",
+-- 		name = "GTMO",
+-- 		x = 48,
+-- 		y = 8 + 1,
+-- 		w = 1,
+-- 		h = 2,
+-- 	},
+-- 	D_04 = {
+-- 		id = "4",
+-- 		name = "ME Patterns",
+-- 		x = 44,
+-- 		y = 11,
+-- 		w = 3,
+-- 		h = 1,
+-- 	},
+-- }
+---
 
 local MainView = {}
 MainView.__index = MainView
@@ -59,6 +108,12 @@ function MainView.new(B, state)
 	local bfBuilding = ExperimentalFrame.new(cMain, xOff, yOff, buildingW, buildingH)
 
 	local cBuilding = bfBuilding:getContainer()
+	-- local cBuilding = cMain:addFrame({
+	--   x = xOff+2,
+	--   y = yOff,
+	--   width = buildingW,
+	--   height = buildingH+5,
+	-- })
 
 	local innerH = buildingH - 3
 
@@ -82,7 +137,7 @@ function MainView.new(B, state)
 	local bfMEController = ExperimentalFrame.new(cBuilding, 0, 0, meW, innerH)
 	local bfServerRoom = ExperimentalFrame.new(cBuilding, meW + corridor1W - 2, 0, serverRoomW, topRowH)
 	local bfDrawerHole = ExperimentalFrame.new(cBuilding, meW + corridor1W + serverRoomW - 3, 0, drawerHoleW, topRowH)
-	local bfMeAutocraft =
+	local bfMePatterns =
 		ExperimentalFrame.new(cBuilding, gtmoX - meAutocraftW + 1, topRowH + corridor2H - 2, meAutocraftW, meAutocraftH)
 	local bfGTMO = ExperimentalFrame.new(cBuilding, gtmoX, 0, gtmoW, innerH)
 
@@ -107,7 +162,25 @@ function MainView.new(B, state)
 		background = colors.lightGray,
 	})
 
+	-- === Doorways === --
 
+	local doorXOff = 3
+	local doorYOff = 1
+
+	for _, doorData in pairs(DOORWAYS) do
+		-- local door = Door.new(cBuilding, doorData.id,doorData.x, doorData.y, doorData.w, doorData.h)
+		local door = Door.new(cMain, state, doorData.id, doorData.key, doorData.x + doorXOff, doorData.y + doorYOff, doorData.w, doorData.h)
+		table.insert(self.components, door)
+	end
+
+	-- === Doorways === --
+
+  local wMEController = MEController.new(cBuilding, state, "MEController", 4, 
+  4)
+
+
+
+	-- === ======== === --
 	-- -- === Side Panel ===
 	-- local fSide = ExperimentalFrame.new(B, monW - sideW + 1, 3, sideW, monH - bottomH)
 	-- fSide:getContainer()

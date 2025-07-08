@@ -5,6 +5,8 @@ local ExperimentalFrame = require("ui.ExperimentalFrame")
 local MatrixStatusFrame = require("ui.MatrixComponent")
 local basalt = require("lib.basalt.src")
 
+local DOORWAYS = require("config").Doorways
+
 local theme = require("common.theme")
 
 local EnergyView = {}
@@ -45,11 +47,31 @@ function EnergyView.new(B, state)
 	-- matrix:setFillLevel(64)
 	-- matrix:updateInfo("Input", "7.52 MFE/t")
 
-	local doorLabel = mainContainer:addLabel():setPosition(2, 15):setText("Door Closed")
+	-- local doorLabel = mainContainer:addLabel():setPosition(2, 15):setText("Door Closed")
+	--
+	-- state:onStateChange("D_01", function(self, val)
+	-- 	doorLabel:setText(val and "Door Opened" or "Door Closed")
+	-- end)
+  -- Door labels
+  local idx = 0
+  local startX = 38
+  local startY = 2
+  for _, door in pairs(DOORWAYS) do
+    print(door.name, door.key, door.id)
+    local open = self.state:getState(door.key)
+    local doorLabel = mainContainer:addLabel()
+      :setPosition(startX , startY + idx)
+      :setText(door.name .. ": " ..  (open and "Open" or "Closed"))
+      :setForeground(colors.red)
 
-	state:onStateChange("D_01", function(self, val)
-		doorLabel:setText(val and "Door Opened" or "Door Closed")
-	end)
+    -- doorLabel:bind("text", door.key)
+
+    idx = idx + 1
+    state:onStateChange(door.key, function(name, val)
+      doorLabel:setText(door.name .. ": " .. (val and "Open" or "Closed"))
+      :setForeground(val and colors.green or colors.red)
+    end)
+  end
 
 	return self
 end

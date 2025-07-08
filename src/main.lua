@@ -3,6 +3,8 @@ local MainView = require("ui.views.MainView")
 local InputView = require("ui.views.InputView")
 local EnergyView = require("ui.views.EnergyView")
 
+local DOORWAYS = require("config").Doorways
+
 local selectedMonitor = nil
 local views = {}
 
@@ -10,6 +12,20 @@ local MONITOR_MAIN = "monitor_1"
 local MONITOR_INPUT = "monitor_2"
 local MONITOR_ENERGY = "monitor_3"
 local MONITOR_STATS = "monitor_4"
+
+local function initState(state)
+	if not state then
+		error("State cannot be nil")
+	end
+
+	if not state.D_01 then
+		state.D_01 = { open = false, locked = false }
+	end
+	-- Initialize all door states if not already present
+	for key, _ in pairs(DOORWAYS) do
+			state:initializeState(key, false, false) -- no persistence, default: closed
+	end
+end
 
 local function init()
 	local monitor = peripheral.wrap(MONITOR_MAIN)
@@ -19,7 +35,9 @@ local function init()
 
 	local B = basalt.createFrame():setTerm(monitor)
 
-	B:initializeState("D_01", false, false)
+  initState(B)
+
+	-- B:initializeState("D_01", false, false)
 	--:initializeState("D_02", false, false)
 
 	local mainView = MainView.new(B, B)
