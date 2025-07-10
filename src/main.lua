@@ -40,7 +40,7 @@ local function init()
 
 	initState(B)
 
-	local redstSide = "back"
+	local redstSide = "top"
 	mainRedIo = RedIO.new(redstSide, B, {
 		D_00 = { side = redstSide, mode = "output", bundled = colors.white },
 		D_01 = { side = redstSide, mode = "input", bundled = colors.blue },
