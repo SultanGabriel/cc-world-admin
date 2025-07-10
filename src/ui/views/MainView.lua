@@ -70,8 +70,8 @@ function MainView.new(B, state)
 	local monW, monH = B:getSize()
   print("MainView: new() - Monitor size:", monW, monH)
 
-  local realW = 7 * 15
-  local realH = 5 * 5
+  local realW = 157
+  local realH = 33
 
 	B:setBackground(theme.backgroundColor)
 

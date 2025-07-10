@@ -19,8 +19,8 @@ function InputView.new(B, state)
 
 	local monW, monH = B:getSize()
 
-  local realW = 7 * 5
-  local realH = 5 * 2
+  local realW = 50
+  local realH = 12
 
   print("InputView: new() - Monitor size:", monW, monH)
 
