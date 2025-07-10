@@ -20,6 +20,7 @@ function EnergyView.new(B, state)
 	self.state = state
 
 	local monW, monH = B:getSize()
+  print("EnergyView: new() - Monitor size:", monW, monH)
 
 	B:setBackground(theme.backgroundColor)
 

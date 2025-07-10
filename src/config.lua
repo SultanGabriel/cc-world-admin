@@ -1,6 +1,6 @@
 local Doorways = {
 	D_00 = {
-    key = "D_00",
+		key = "D_00",
 		id = "0",
 		name = "Main Entrance",
 		x = 18,
@@ -9,7 +9,7 @@ local Doorways = {
 		h = 1,
 	},
 	D_01 = {
-    key = "D_01",
+		key = "D_01",
 		id = "1",
 		name = "ME Controller",
 		x = 17,
@@ -18,7 +18,7 @@ local Doorways = {
 		h = 3,
 	},
 	D_02 = {
-    key = "D_02",
+		key = "D_02",
 		id = "2",
 		name = "ME Server Room",
 		x = 34,
@@ -27,16 +27,16 @@ local Doorways = {
 		h = 1,
 	},
 	D_03 = {
-    key = "D_03",
+		key = "D_03",
 		id = "3",
-		name = "GTMO",
-		x = 48,
-		y = 8 + 1,
+		name = "Sefety Door",
+		x = 39,
+		y = 9,
 		w = 1,
 		h = 2,
 	},
 	D_04 = {
-    key = "D_04",
+		key = "D_04",
 		id = "4",
 		name = "ME Patterns",
 		x = 44,
@@ -45,13 +45,22 @@ local Doorways = {
 		h = 1,
 	},
 	D_05 = {
-    key = "D_05",
+		key = "D_05",
 		id = "5",
 		name = "Drawer Hole",
 		x = 44,
 		y = 8,
 		w = 3,
 		h = 1,
+	},
+	D_06 = {
+		key = "D_06",
+		id = "6",
+		name = "GTMO",
+		x = 48,
+		y = 9 ,
+		w = 1,
+		h = 2,
 	},
 }
 

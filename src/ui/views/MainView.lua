@@ -68,6 +68,10 @@ function MainView.new(B, state)
 	self.state = state or {}
 
 	local monW, monH = B:getSize()
+  print("MainView: new() - Monitor size:", monW, monH)
+
+  local realW = 7 * 15
+  local realH = 5 * 5
 
 	B:setBackground(theme.backgroundColor)
 
@@ -76,19 +80,19 @@ function MainView.new(B, state)
 	local fHeader = B:addFrame({
 		x = 1,
 		y = 1,
-		width = monW,
+		width = realW,
 		height = headerH,
 		background = theme.headerBackgroundColor,
 	})
 
 	fHeader:addLabel({
-		x = monW / 2 - 20,
+		x = realW / 2 - 20,
 		y = 1,
 		text = "GregTech Factory Central Monitoring System",
 		foreground = colors.white,
 	})
 
-	local clock = Clock.new(fHeader, monW - 10, 1)
+	local clock = Clock.new(fHeader, realW - 10, 1)
 	table.insert(self.components, clock)
 
 	-- === Main ===
@@ -97,7 +101,7 @@ function MainView.new(B, state)
 
 	-- local fMain = ExperimentalFrame.new(B, 1, 3, monW - sideW, monH - bottomH )
 	-- local fMain = ExperimentalFrame.new(B, 1, 3, monW, monH - bottomH)
-	local bfMain = ExperimentalFrame.new(B, 1, 3, monW, monH - headerH)
+	local bfMain = ExperimentalFrame.new(B, 1, 2, realW, realH - headerH+1)
 	local cMain = bfMain:getContainer()
 
 	local buildingW = 70

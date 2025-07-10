@@ -5,8 +5,11 @@ local EnergyView = require("ui.views.EnergyView")
 
 local DOORWAYS = require("config").Doorways
 
+local RedIO = require("common.redio")
+
 local selectedMonitor = nil
 local views = {}
+mainRedIo = nil
 
 local MONITOR_MAIN = "monitor_1"
 local MONITOR_INPUT = "monitor_2"
@@ -23,7 +26,7 @@ local function initState(state)
 	end
 	-- Initialize all door states if not already present
 	for key, _ in pairs(DOORWAYS) do
-			state:initializeState(key, false, false) -- no persistence, default: closed
+		state:initializeState(key, false, false) -- no persistence, default: closed
 	end
 end
 
@@ -35,7 +38,18 @@ local function init()
 
 	local B = basalt.createFrame():setTerm(monitor)
 
-  initState(B)
+	initState(B)
+
+	local redstSide = "back"
+	mainRedIo = RedIO.new(redstSide, B, {
+		D_00 = { side = redstSide, mode = "output", bundled = colors.white },
+		D_01 = { side = redstSide, mode = "input", bundled = colors.blue },
+		D_02 = { side = redstSide, mode = "input", bundled = colors.green },
+		D_03 = { side = redstSide, mode = "input", bundled = colors.red },
+		D_04 = { side = redstSide, mode = "input", bundled = colors.yellow },
+		D_05 = { side = redstSide, mode = "input", bundled = colors.purple },
+		D_06 = { side = redstSide, mode = "input", bundled = colors.orange },
+	})
 
 	-- B:initializeState("D_01", false, false)
 	--:initializeState("D_02", false, false)
@@ -58,6 +72,20 @@ local function init()
 end
 
 init()
+
+local POLL_INTERVAL = 0.5 -- seconds
+basalt.schedule(function()
+	while true do
+    if(not mainRedIo) then
+      print("mainRedIo is not initialized, skipping pollInputs")
+      return
+    end
+
+		mainRedIo:pollInputs()
+		os.sleep(POLL_INTERVAL)
+
+	end
+end)
 
 parallel.waitForAny(
 	-- View update loop

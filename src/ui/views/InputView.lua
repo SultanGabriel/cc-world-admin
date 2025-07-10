@@ -19,28 +19,35 @@ function InputView.new(B, state)
 
 	local monW, monH = B:getSize()
 
+  local realW = 7 * 5
+  local realH = 5 * 2
+
+  print("InputView: new() - Monitor size:", monW, monH)
+
 	B:setBackground(theme.backgroundColor)
 
 	-- === Header ===
 	--[[ 	local fHeader = B:addFrame():setPosition(1, 1):setSize(monW, 1):setBackground(theme.headerBackgroundColor) ]]
 
 	-- === Main ===
-	local fMain = ExperimentalFrame.new(B, 1, 1, monW, monH)
+	local fMain = ExperimentalFrame.new(B, 1, 1, realW, realH)
 	local mainContainer = fMain:getContainer()
 
-	local btnOne = mainContainer
-		:addButton()
-		:setText("Start Process")
-		:setPosition(2, 1)
-		:setSize(29, 1)
-		:setBackground(colors.green)
-		:onClick(function(button, x, y)
-			print("Process started!")
-			print("Button clicked at: " .. x .. ", " .. y)
-		end)
+	-- local btnOne = mainContainer
+	-- 	:addButton({
+	--
+ --    })
+		-- :setText("Start Process")
+		-- :setPosition(2, 1)
+		-- :setSize(29, 1)
+		-- :setBackground(colors.green)
+		-- :onClick(function(button, x, y)
+		-- 	print("Process started!")
+		-- 	print("Button clicked at: " .. x .. ", " .. y)
+		-- end)
 
-	mainContainer:addButton():setText("Stop Process"):setPosition(2, 3):setSize(29, 1):setBackground(colors.red)
-
+	-- mainContainer:addButton():setText("Stop Process"):setPosition(2, 3):setSize(29, 1):setBackground(colors.red)
+	--
 	-- local btnD01 = mainContainer
 	-- 	:addButton({
 	-- 		text = "D01",
@@ -59,13 +66,13 @@ function InputView.new(B, state)
   local btnH = 1
   local btnW = 4
   local btnX = 2
-  local btnY = 5
-  local space = 1
+  local btnY = 1
+  local space = 0
 
 
   local idx = 0
   for key, door in pairs(DOORWAYS) do
-    local doorState = state:getState(key) 
+    local doorState = state:getState(key)
 
     mainContainer:addButton({
       text = door.id,
