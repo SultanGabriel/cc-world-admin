@@ -4,6 +4,7 @@ local Clock = require("ui.ClockComponent")
 local BorderedFrame = require("ui.BorderedFrame")
 local ExperimentalFrame = require("ui.ExperimentalFrame")
 local Door = require("ui.Door")
+	local PlayerCard = require("ui.PlayerCard")
 
 local MEController = require("ui.widgets.MEController")
 local DOORWAYS = require("config").Doorways
@@ -68,10 +69,10 @@ function MainView.new(B, state)
 	self.state = state or {}
 
 	local monW, monH = B:getSize()
-  print("MainView: new() - Monitor size:", monW, monH)
+	print("MainView: new() - Monitor size:", monW, monH)
 
-  local realW = 157
-  local realH = 33
+	local realW = 157
+	local realH = 33
 
 	B:setBackground(theme.backgroundColor)
 
@@ -101,7 +102,7 @@ function MainView.new(B, state)
 
 	-- local fMain = ExperimentalFrame.new(B, 1, 3, monW - sideW, monH - bottomH )
 	-- local fMain = ExperimentalFrame.new(B, 1, 3, monW, monH - bottomH)
-	local bfMain = ExperimentalFrame.new(B, 1, 2, realW, realH - headerH+1)
+	local bfMain = ExperimentalFrame.new(B, 1, 2, realW, realH - headerH + 1)
 	local cMain = bfMain:getContainer()
 
 	local buildingW = 70
@@ -173,16 +174,37 @@ function MainView.new(B, state)
 
 	for _, doorData in pairs(DOORWAYS) do
 		-- local door = Door.new(cBuilding, doorData.id,doorData.x, doorData.y, doorData.w, doorData.h)
-		local door = Door.new(cMain, state, doorData.id, doorData.key, doorData.x + doorXOff, doorData.y + doorYOff, doorData.w, doorData.h)
+		local door = Door.new(
+			cMain,
+			state,
+			doorData.id,
+			doorData.key,
+			doorData.x + doorXOff,
+			doorData.y + doorYOff,
+			doorData.w,
+			doorData.h
+		)
 		table.insert(self.components, door)
 	end
 
 	-- === Doorways === --
 
-  local wMEController = MEController.new(cBuilding, state, "MEController", 4, 
-  4)
+	local wMEController = MEController.new(cBuilding, state, "MEController", 4, 4)
 
+	-- other shit???
 
+	local player = {
+		name = "Steve",
+		health = 120,
+		maxHealth = 500,
+		x = 104,
+		y = 65,
+		z = -120,
+		dimension = "Overworld",
+	}
+
+	local card = PlayerCard.new(cMain, 80, 10, player)
+	table.insert(self.components, card)
 
 	-- === ======== === --
 	-- -- === Side Panel ===

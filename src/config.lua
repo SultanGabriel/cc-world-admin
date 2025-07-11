@@ -58,12 +58,53 @@ local Doorways = {
 		id = "6",
 		name = "GTMO",
 		x = 48,
-		y = 9 ,
+		y = 9,
 		w = 1,
 		h = 2,
 	},
 }
+DOOR_INPUT_SIDE = "top"
+local RedstoneInput = {
+	D_00 = {
+		side = DOOR_INPUT_SIDE,
+		mode = "output",
+		bundled = colors.white,
+	},
+	D_01 = {
+		side = DOOR_INPUT_SIDE,
+		mode = "input",
+		bundled = colors.blue,
+	},
+	D_02 = {
+		side = DOOR_INPUT_SIDE,
+		mode = "input",
+		bundled = colors.green,
+	},
+	D_03 = {
+		side = DOOR_INPUT_SIDE,
+		mode = "input",
+		bundled = colors.red,
+	},
+	D_04 = {
+		side = DOOR_INPUT_SIDE,
+		mode = "input",
+		bundled = colors.yellow,
+	},
+	D_05 = {
+		side = DOOR_INPUT_SIDE,
+		mode = "input",
+		bundled = colors.purple,
+	},
+	D_06 = {
+		side = DOOR_INPUT_SIDE,
+		mode = "input",
+		bundled = colors.orange,
+	},
+}
 
+local RedstoneOutput = {}
 return {
 	Doorways = Doorways,
+  RedstoneInput = RedstoneInput,
+  RedstoneOutput = RedstoneOutput,
 }

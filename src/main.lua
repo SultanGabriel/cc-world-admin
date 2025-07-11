@@ -4,12 +4,14 @@ local InputView = require("ui.views.InputView")
 local EnergyView = require("ui.views.EnergyView")
 
 local DOORWAYS = require("config").Doorways
+local REDSTONE_INPUT = require("config").RedstoneInput
 
 local RedIO = require("common.redio")
 
-local selectedMonitor = nil
+-- local selectedMonitor = nil
 local views = {}
-mainRedIo = nil
+RedIO_In = nil
+RedIO_Out = nil
 
 local MONITOR_MAIN = "monitor_1"
 local MONITOR_INPUT = "monitor_2"
@@ -41,15 +43,7 @@ local function init()
 	initState(B)
 
 	local redstSide = "top"
-	mainRedIo = RedIO.new(redstSide, B, {
-		D_00 = { side = redstSide, mode = "output", bundled = colors.white },
-		D_01 = { side = redstSide, mode = "input", bundled = colors.blue },
-		D_02 = { side = redstSide, mode = "input", bundled = colors.green },
-		D_03 = { side = redstSide, mode = "input", bundled = colors.red },
-		D_04 = { side = redstSide, mode = "input", bundled = colors.yellow },
-		D_05 = { side = redstSide, mode = "input", bundled = colors.purple },
-		D_06 = { side = redstSide, mode = "input", bundled = colors.orange },
-	})
+	RedIO_In = RedIO.new(redstSide, B, REDSTONE_INPUT)
 
 	-- B:initializeState("D_01", false, false)
 	--:initializeState("D_02", false, false)
@@ -76,14 +70,13 @@ init()
 local POLL_INTERVAL = 0.5 -- seconds
 basalt.schedule(function()
 	while true do
-    if(not mainRedIo) then
-      print("mainRedIo is not initialized, skipping pollInputs")
-      return
-    end
+		if not RedIO_In then
+			print("mainRedIo is not initialized, skipping pollInputs")
+			return
+		end
 
-		mainRedIo:pollInputs()
+		RedIO_In:pollInputs()
 		os.sleep(POLL_INTERVAL)
-
 	end
 end)
 
