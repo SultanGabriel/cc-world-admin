@@ -193,17 +193,13 @@ function MainView.new(B, state)
 
 	-- other shit???
 
-	local cPlayerList = cMain
-		:addFrame()
-		:setPosition(80, 2)
-		:setSize(30, realH)
-		:setBackground(colors.black)
+	local cPlayerList = cMain:addFrame():setPosition(80, 2):setSize(30, realH):setBackground(colors.black)
 
-local function clearChildren(frame)
-	for _, child in ipairs(frame:getChildren()) do
-		frame:removeChild(child)
+	local function clearChildren(frame)
+		for _, child in ipairs(frame:getChildren()) do
+			frame:removeChild(child)
+		end
 	end
-end
 
 	state:onStateChange("players", function(_, players)
 		players = players or {}
@@ -253,7 +249,6 @@ end
 
 	return self
 end
-
 
 function MainView:update()
 	for _, c in ipairs(self.components) do

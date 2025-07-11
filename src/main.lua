@@ -64,17 +64,20 @@ local function init()
 	local redstSide = "top"
 	RedIO_In = RedIO.new(redstSide, B, REDSTONE_INPUT)
 
-  local mock = mockPlayerDetectorOutput(
-  { "Alice", "Bob", "Redbull", "John"},
-  {
-    Alice = { x = 100, y = 64, z = 100, dimension = "minecraft:overworld", health = 18, maxHealth = 20 },
-    Bob   = { x = 200, y = 70, z = 150, dimension = "minecraft:nether", health = 12, maxHealth = 20 },
-    Redbull = { x = 100, y = 64, z = 100, dimension = "minecraft:overworld", health = 18, maxHealth = 20 },
-    John   = { x = 200, y = 70, z = 150, dimension = "minecraft:nether", health = 12, maxHealth = 20 },
-  }
-)
+--   local mock = mockPlayerDetectorOutput(
+--   { "Alice", "Bob", "Redbull", "John"},
+--   {
+--     Alice = { x = 100, y = 64, z = 100, dimension = "minecraft:overworld", health = 18, maxHealth = 20 },
+--     Bob   = { x = 200, y = 70, z = 150, dimension = "minecraft:nether", health = 12, maxHealth = 20 },
+--     Redbull = { x = 100, y = 64, z = 100, dimension = "minecraft:overworld", health = 18, maxHealth = 20 },
+--     John   = { x = 200, y = 70, z = 150, dimension = "minecraft:nether", health = 12, maxHealth = 20 },
+--   }
+-- )
 
-PDIO= PlayerDetectorIO.new(mock, B)
+  CHATBOX = peripheral.wrap("chatBox_0")
+  PD = peripheral.wrap("playerDetector_0")
+
+PDIO= PlayerDetectorIO.new(B, PD, CHATBOX)
 
 
 	-- B:initializeState("D_01", false, false)
@@ -115,7 +118,7 @@ basalt.schedule(function()
       return
     end
 
-    PDIO:updateOnlinePlayers()
+    PDIO:update()
 		os.sleep(POLL_INTERVAL)
 	end
 end)
