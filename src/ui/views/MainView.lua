@@ -4,7 +4,7 @@ local Clock = require("ui.ClockComponent")
 local BorderedFrame = require("ui.BorderedFrame")
 local ExperimentalFrame = require("ui.ExperimentalFrame")
 local Door = require("ui.Door")
-	local PlayerCard = require("ui.PlayerCard")
+local PlayerCard = require("ui.PlayerCard")
 
 local MEController = require("ui.widgets.MEController")
 local DOORWAYS = require("config").Doorways
@@ -193,18 +193,51 @@ function MainView.new(B, state)
 
 	-- other shit???
 
-	local player = {
-		name = "Steve",
-		health = 120,
-		maxHealth = 500,
-		x = 104,
-		y = 65,
-		z = -120,
-		dimension = "Overworld",
-	}
+	local cPlayerList = cMain
+		:addFrame()
+		:setPosition(80, 2)
+		:setSize(30, realH)
+		:setBackground(colors.black)
 
-	local card = PlayerCard.new(cMain, 80, 10, player)
-	table.insert(self.components, card)
+local function clearChildren(frame)
+	for _, child in ipairs(frame:getChildren()) do
+		frame:removeChild(child)
+	end
+end
+
+	state:onStateChange("players", function(_, players)
+		players = players or {}
+
+		clearChildren(cPlayerList)
+
+		local y = 1
+		for _, data in pairs(players) do
+			local card = PlayerCard.new(cPlayerList, 1, y, data)
+			y = y + 6 -- Adjust spacing as needed
+		end
+	end)
+
+	-- local playerStartY = 10
+	-- state:onStateChange("players", function()
+	-- 	local players = self.state:getState("players") or {}
+	-- 	for username, data in pairs(players) do
+	--      print("Drawing card", playerStartY)
+	-- 		PlayerCard.new(cMain, 80, playerStartY, data)
+	-- 		playerStartY = playerStartY + 10
+	-- 	end
+	-- end)
+	-- local player = {
+	-- 	name = "Steve",
+	-- 	health = 120,
+	-- 	maxHealth = 500,
+	-- 	x = 104,
+	-- 	y = 65,
+	-- 	z = -120,
+	-- 	dimension = "Overworld",
+	-- }
+	--
+	-- local card = PlayerCard.new(cMain, 80, 10, player)
+	-- table.insert(self.components, card)
 
 	-- === ======== === --
 	-- -- === Side Panel ===
@@ -220,6 +253,7 @@ function MainView.new(B, state)
 
 	return self
 end
+
 
 function MainView:update()
 	for _, c in ipairs(self.components) do

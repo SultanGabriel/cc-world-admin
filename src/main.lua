@@ -7,16 +7,33 @@ local DOORWAYS = require("config").Doorways
 local REDSTONE_INPUT = require("config").RedstoneInput
 
 local RedIO = require("common.redio")
+local PlayerDetectorIO = require("common.PlayerDetectorIO")
 
 -- local selectedMonitor = nil
 local views = {}
 RedIO_In = nil
 RedIO_Out = nil
+PDIO = nil
 
 local MONITOR_MAIN = "monitor_1"
 local MONITOR_INPUT = "monitor_2"
 local MONITOR_ENERGY = "monitor_3"
 local MONITOR_STATS = "monitor_4"
+
+--- Mock the output of a playerDetector for testing purposes
+-- @param usernames table of strings (player names)
+-- @param playerDataMap table where each key is a username and value is a table with fields:
+--        x, y, z, dimension, health, maxHealth
+local function mockPlayerDetectorOutput(usernames, playerDataMap)
+  return {
+    getOnlinePlayers = function()
+      return usernames
+    end,
+    getPlayerPos = function(username)
+      return playerDataMap[username]
+    end,
+  }
+end
 
 local function initState(state)
 	if not state then
@@ -30,6 +47,8 @@ local function initState(state)
 	for key, _ in pairs(DOORWAYS) do
 		state:initializeState(key, false, false) -- no persistence, default: closed
 	end
+
+  state:initializeState("players", {}) -- Initialize players state
 end
 
 local function init()
@@ -44,6 +63,19 @@ local function init()
 
 	local redstSide = "top"
 	RedIO_In = RedIO.new(redstSide, B, REDSTONE_INPUT)
+
+  local mock = mockPlayerDetectorOutput(
+  { "Alice", "Bob", "Redbull", "John"},
+  {
+    Alice = { x = 100, y = 64, z = 100, dimension = "minecraft:overworld", health = 18, maxHealth = 20 },
+    Bob   = { x = 200, y = 70, z = 150, dimension = "minecraft:nether", health = 12, maxHealth = 20 },
+    Redbull = { x = 100, y = 64, z = 100, dimension = "minecraft:overworld", health = 18, maxHealth = 20 },
+    John   = { x = 200, y = 70, z = 150, dimension = "minecraft:nether", health = 12, maxHealth = 20 },
+  }
+)
+
+PDIO= PlayerDetectorIO.new(mock, B)
+
 
 	-- B:initializeState("D_01", false, false)
 	--:initializeState("D_02", false, false)
@@ -72,10 +104,18 @@ basalt.schedule(function()
 	while true do
 		if not RedIO_In then
 			print("mainRedIo is not initialized, skipping pollInputs")
+      os.sleep(POLL_INTERVAL)
 			return
 		end
-
 		RedIO_In:pollInputs()
+
+    if not PDIO then
+      print("PDIO is not initialized, skipping updateOnlinePlayers")
+      os.sleep(POLL_INTERVAL)
+      return
+    end
+
+    PDIO:updateOnlinePlayers()
 		os.sleep(POLL_INTERVAL)
 	end
 end)
