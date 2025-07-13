@@ -79,6 +79,27 @@ function EnergyView.new(B, state)
 		end)
 	end
 
+	local trackList = mainContainer
+		:addList()
+		:setPosition(2, 2)
+		:setSize(30, 10)
+		:setSelectable(true)
+		:setMultiSelection(false)
+		:setBackground(colors.gray)
+		:setSelectedBackground(colors.green)
+		:setSelectedForeground(colors.black)
+
+	if MPIO then
+		for _, track in ipairs(MPIO.tracks) do
+			trackList:addItem(track)
+		end
+
+		trackList:onSelect(function(item,index)
+			print("[UI] Selected track:", item.name)
+			MPIO:playTrackById(index)
+		end)
+	end
+
 	return self
 end
 

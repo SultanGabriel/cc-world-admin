@@ -37,23 +37,23 @@ function MediaPlayer:_init()
 end
 
 function MediaPlayer:refreshTrackList()
-  if not fs.exists(AUDIO_DIR) then
-    print("[MediaPlayer] Directory missing, creating:", AUDIO_DIR)
-    fs.makeDir(AUDIO_DIR)
-  end
+	if not fs.exists(AUDIO_DIR) then
+		print("[MediaPlayer] Directory missing, creating:", AUDIO_DIR)
+		fs.makeDir(AUDIO_DIR)
+	end
 
-  local files = fs.list(AUDIO_DIR)
-  local dfpwmFiles = {}
-  for _, file in ipairs(files) do
-    if file:match("%.dfpwm$") then
-      table.insert(dfpwmFiles, file)
-    end
-  end
+	local files = fs.list(AUDIO_DIR)
+	local dfpwmFiles = {}
+	for _, file in ipairs(files) do
+		if file:match("%.dfpwm$") then
+			table.insert(dfpwmFiles, file)
+		end
+	end
 
-  self.tracks = dfpwmFiles
-  self.stateFrame:setState("media_tracks", self.tracks)
+	self.tracks = dfpwmFiles
+	self.stateFrame:setState("media_tracks", self.tracks)
 
-  print("[MediaPlayer] Tracks found:", #self.tracks)
+	print("[MediaPlayer] Tracks found:", #self.tracks)
 end
 
 function MediaPlayer:play(trackName)
@@ -121,6 +121,38 @@ end
 
 function MediaPlayer:setVolume(vol)
 	self.volume = math.max(0, math.min(vol, 3.0))
+end
+
+function MediaPlayer:nextTrack()
+	if #self.tracks == 0 then
+		print("[MediaPlayer] No tracks available.")
+		return
+	end
+
+	local current = self.stateFrame:getState("media_current")
+	local i = 0
+	for idx, track in ipairs(self.tracks) do
+		if track == current then
+			i = idx
+			break
+		end
+	end
+
+	local nextIndex = (i % #self.tracks) + 1
+	print("[MediaPlayer] Switching to next track:", self.tracks[nextIndex])
+	self:play(self.tracks[nextIndex])
+end
+
+function MediaPlayer:playTrackById(index)
+	print("[MediaPlayer] Attempting to play track at index:", index)
+	if not index or index < 1 or index > #self.tracks then
+		print("[MediaPlayer] Invalid track index:", index)
+		return
+	end
+
+	local track = self.tracks[index]
+	print("[MediaPlayer] Playing selected track:", track)
+	self:play(track)
 end
 
 return MediaPlayer

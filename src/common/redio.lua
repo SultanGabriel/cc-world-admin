@@ -128,7 +128,7 @@ end
 --- Poll all configured inputs and write changes to state
 function RedIO:pollInputs()
 	if DEBUG_LOGS then
-		print("[RedIO] Polling inputs")
+		-- print("[RedIO] Polling inputs")
 	end
 	for key, cfg in pairs(self.config) do
 		if cfg.mode == "input" then
