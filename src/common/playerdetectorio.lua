@@ -53,8 +53,8 @@ function PlayerDetectorIO:_init()
 
 	-- Initial state setup
 	self.stateFrame:initializeState("players", {})
-  self.stateFrame:initializedState("PDIO_Zones_Enabled", self.enableZones)
-  self.stateFrame:initializedState("PDIO_Events_Enabled", self.enableEvents)
+  self.stateFrame:initializeState("PDIO_Zones_Enabled", self.enableZones)
+  self.stateFrame:initializeState("PDIO_Events_Enabled", self.enableEvents)
 
 	-- Set up event listeners
 	self.stateFrame:onStateChange("PDIO_Zones_Enabled", function(_, enabled)
@@ -137,6 +137,9 @@ function PlayerDetectorIO:_runZoneCheck()
 	local seenPlayers = {}
 
 	local function isInZone(pos, zone)
+		if pos = nil then return false
+		if zone = nil then return false
+
 		local x1, x2 = math.min(zone.min.x, zone.max.x), math.max(zone.min.x, zone.max.x)
 		local z1, z2 = math.min(zone.min.z, zone.max.z), math.max(zone.min.z, zone.max.z)
 		return pos.x >= x1 and pos.x <= x2 and pos.z >= z1 and pos.z <= z2

@@ -103,8 +103,42 @@ local RedstoneInput = {
 }
 
 local RedstoneOutput = {}
+local Zones = {
+{
+  name = "Democratic Solutions",
+  min = {x = -82, z = -38},
+  max = {x = -28, z = -83}
+},
+{
+  name = "Sobranie Srl",
+  min = {x = -113, z = 55},
+  max = {x = -87, z = 121}
+},
+{
+  name = "GregTech Factory",
+  min = {x = -301, z = 47},
+  max = {x = -130, z = 131}
+},
+{
+  name = "Spawn",
+  min = {x = -345, z = -333},
+  max = {x = -265, z = -193}
+},
+{
+  name = "Magic",
+  min = {x = -152, z = -578},
+  max = {x = -356, z = -728}
+},
+{
+  name = "Chernobyl",
+  min = {x = -317, z = -183},
+  max = {x = -368, z = -143}
+},
+}
+
 return {
 	Doorways = Doorways,
   RedstoneInput = RedstoneInput,
   RedstoneOutput = RedstoneOutput,
+  Zones = Zones,
 }

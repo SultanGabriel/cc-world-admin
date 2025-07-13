@@ -7,7 +7,7 @@ local DOORWAYS = require("config").Doorways
 local REDSTONE_INPUT = require("config").RedstoneInput
 
 local RedIO = require("common.redio")
-local PlayerDetectorIO = require("common.PlayerDetectorIO")
+local PlayerDetectorIO = require("common.playerdetectorio")
 
 -- local selectedMonitor = nil
 local views = {}
@@ -15,10 +15,10 @@ RedIO_In = nil
 RedIO_Out = nil
 PDIO = nil
 
-local MONITOR_MAIN = "monitor_1"
-local MONITOR_INPUT = "monitor_2"
-local MONITOR_ENERGY = "monitor_3"
-local MONITOR_STATS = "monitor_4"
+local MONITOR_MAIN = "monitor_17"
+local MONITOR_INPUT = "monitor_18"
+local MONITOR_ENERGY = "monitor_16"
+-- local MONITOR_STATS = "monitor_4"
 
 --- Mock the output of a playerDetector for testing purposes
 -- @param usernames table of strings (player names)
@@ -48,7 +48,6 @@ local function initState(state)
 		state:initializeState(key, false, false) -- no persistence, default: closed
 	end
 
-  state:initializeState("players", {}) -- Initialize players state
 end
 
 local function init()
@@ -61,7 +60,7 @@ local function init()
 
 	initState(B)
 
-	local redstSide = "top"
+	local redstSide = "bottom"
 	RedIO_In = RedIO.new(redstSide, B, REDSTONE_INPUT)
 
 --   local mock = mockPlayerDetectorOutput(
@@ -78,7 +77,6 @@ local function init()
   PD = peripheral.wrap("playerDetector_0")
 
 PDIO= PlayerDetectorIO.new(B, PD, CHATBOX)
-
 
 	-- B:initializeState("D_01", false, false)
 	--:initializeState("D_02", false, false)
