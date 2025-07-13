@@ -40,12 +40,14 @@ function PlayerDetectorIO.new(stateFrame, playerDetectorPeripheral, chatBoxPerip
 end
 
 function PlayerDetectorIO:_selfCheck()
-  assert(self.peripheral and self.peripheral.getOnlinePlayers, "PlayerDetectorIO requires a valid playerDetector peripheral")
-  assert(self.chatBox and self.chatBox.sendMessage, "PlayerDetectorIO requires a valid chatBox peripheral")
-  assert(self.stateFrame, "PlayerDetectorIO requires a valid stateFrame")
+	assert(
+		self.peripheral and self.peripheral.getOnlinePlayers,
+		"PlayerDetectorIO requires a valid playerDetector peripheral"
+	)
+	assert(self.chatBox and self.chatBox.sendMessage, "PlayerDetectorIO requires a valid chatBox peripheral")
+	assert(self.stateFrame, "PlayerDetectorIO requires a valid stateFrame")
 
-  log("Self-check passed: All required peripherals and state frame are valid.")
-	
+	log("Self-check passed: All required peripherals and state frame are valid.")
 end
 
 function PlayerDetectorIO:_init()
@@ -53,20 +55,19 @@ function PlayerDetectorIO:_init()
 
 	-- Initial state setup
 	self.stateFrame:initializeState("players", {})
-  self.stateFrame:initializeState("PDIO_Zones_Enabled", self.enableZones)
-  self.stateFrame:initializeState("PDIO_Events_Enabled", self.enableEvents)
+	self.stateFrame:initializeState("PDIO_Zones_Enabled", self.enableZones)
+	self.stateFrame:initializeState("PDIO_Events_Enabled", self.enableEvents)
 
 	-- Set up event listeners
 	self.stateFrame:onStateChange("PDIO_Zones_Enabled", function(_, enabled)
-    self.enableZones = enabled
-    log("Zone notifications " .. (enabled and "enabled" or "disabled"))
-  end)
+		self.enableZones = enabled
+		log("Zone notifications " .. (enabled and "enabled" or "disabled"))
+	end)
 
-  self.stateFrame:onStateChange("PDIO_Events_Enabled", function(_, enabled)
-    self.enableEvents = enabled
-    log("Event loop " .. (enabled and "enabled" or "disabled"))
-  end)
-
+	self.stateFrame:onStateChange("PDIO_Events_Enabled", function(_, enabled)
+		self.enableEvents = enabled
+		log("Event loop " .. (enabled and "enabled" or "disabled"))
+	end)
 
 	log("PlayerDetectorIO initialized successfully.")
 end
@@ -102,7 +103,7 @@ function PlayerDetectorIO:update()
 	self:updateOnlinePlayers()
 
 	if self.enableEvents then
-    self:PlayerEventLoop()
+		self:PlayerEventLoop()
 	end
 
 	if self.enableZones then
@@ -137,8 +138,12 @@ function PlayerDetectorIO:_runZoneCheck()
 	local seenPlayers = {}
 
 	local function isInZone(pos, zone)
-		if pos = nil then return false
-		if zone = nil then return false
+		if pos == nil then
+			return false
+		end
+		if zone == nil then
+			return false
+		end
 
 		local x1, x2 = math.min(zone.min.x, zone.max.x), math.max(zone.min.x, zone.max.x)
 		local z1, z2 = math.min(zone.min.z, zone.max.z), math.max(zone.min.z, zone.max.z)
@@ -155,8 +160,7 @@ function PlayerDetectorIO:_runZoneCheck()
 
 			if inZone and not self.playerActiveZones[key] then
 				self.playerActiveZones[key] = true
-        self:_zoneEnter(player, zone)
-
+				self:_zoneEnter(player, zone)
 			elseif not inZone and self.playerActiveZones[key] then
 				self.playerActiveZones[key] = false
 			end

@@ -107,8 +107,9 @@ function MainView.new(B, state)
 
 	local buildingW = 70
 	local buildingH = 20
-	local xOff = 3
+	local xOff = (realW / 2 ) - (buildingW / 2) + 1
 	local yOff = 2
+  print("xOff, yOff:", xOff, yOff)
 
 	local bfBuilding = ExperimentalFrame.new(cMain, xOff, yOff, buildingW, buildingH)
 
@@ -193,7 +194,20 @@ function MainView.new(B, state)
 
 	-- other shit???
 
-	local cPlayerList = cMain:addFrame():setPosition(80, 2):setSize(30, realH):setBackground(colors.black)
+	local cPlayerList = cMain:addFrame({
+    x = 1,
+    y = 1,
+    width = 30,
+    height = realH -3,
+
+  })
+    --:setPosition(80, 2):setSize(30, realH):setBackground(colors.black)
+  cPlayerList:addLabel({
+    x = 2,
+    y = 1,
+    text = "Players Online",
+    foreground = colors.red
+  })
 
 	local function clearChildren(frame)
 		for _, child in ipairs(frame:getChildren()) do
@@ -206,7 +220,7 @@ function MainView.new(B, state)
 
 		clearChildren(cPlayerList)
 
-		local y = 1
+		local y = 3
 		for _, data in pairs(players) do
 			local card = PlayerCard.new(cPlayerList, 1, y, data)
 			y = y + 6 -- Adjust spacing as needed
