@@ -67,7 +67,7 @@ DOOR_INPUT_SIDE = "top"
 local RedstoneInput = {
 	D_00 = {
 		side = DOOR_INPUT_SIDE,
-		mode = "output",
+		mode = "input",
 		bundled = colors.white,
 	},
 	D_01 = {

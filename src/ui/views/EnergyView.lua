@@ -79,9 +79,14 @@ function EnergyView.new(B, state)
 		end)
 	end
 
+  mainContainer:addLabel({
+    x = 2,
+    y = 2,
+    text = "Track List",
+  })
 	local trackList = mainContainer
 		:addList()
-		:setPosition(2, 2)
+		:setPosition(2, 3)
 		:setSize(30, 10)
 		:setSelectable(true)
 		:setMultiSelection(false)
@@ -99,6 +104,8 @@ function EnergyView.new(B, state)
 			MPIO:playTrackById(index)
 		end)
 	end
+
+  -- trackList:
 
 	return self
 end

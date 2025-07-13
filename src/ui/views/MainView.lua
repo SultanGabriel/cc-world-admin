@@ -194,19 +194,21 @@ function MainView.new(B, state)
 
 	-- other shit???
 
-	local cPlayerList = cMain:addFrame({
-    x = 1,
-    y = 1,
-    width = 30,
-    height = realH -3,
-
-  })
+  local playersList = ExperimentalFrame.new(cMain,0,0,30, realH-1)
+  local cPlayerList = playersList:getContainer()
+	-- local cPlayerList = cMain:addFrame({
+ --    x = 1,
+ --    y = 1,
+ --    width = 30,
+ --    height = realH -3,
+	--
+ --  })
     --:setPosition(80, 2):setSize(30, realH):setBackground(colors.black)
   cPlayerList:addLabel({
-    x = 2,
+    x = 8,
     y = 1,
     text = "Players Online",
-    foreground = colors.red
+    foreground = colors.black
   })
 
 	local function clearChildren(frame)
@@ -227,39 +229,41 @@ function MainView.new(B, state)
 		end
 	end)
 
-	-- local playerStartY = 10
-	-- state:onStateChange("players", function()
-	-- 	local players = self.state:getState("players") or {}
-	-- 	for username, data in pairs(players) do
-	--      print("Drawing card", playerStartY)
-	-- 		PlayerCard.new(cMain, 80, playerStartY, data)
-	-- 		playerStartY = playerStartY + 10
-	-- 	end
-	-- end)
-	-- local player = {
-	-- 	name = "Steve",
-	-- 	health = 120,
-	-- 	maxHealth = 500,
-	-- 	x = 104,
-	-- 	y = 65,
-	-- 	z = -120,
-	-- 	dimension = "Overworld",
-	-- }
-	--
-	-- local card = PlayerCard.new(cMain, 80, 10, player)
-	-- table.insert(self.components, card)
 
-	-- === ======== === --
-	-- -- === Side Panel ===
-	-- local fSide = ExperimentalFrame.new(B, monW - sideW + 1, 3, sideW, monH - bottomH)
-	-- fSide:getContainer()
-	--   :addLabel()
-	--   :setText("System Status")
-	--   :setPosition(2, 1)
+-- === CURRENTLY PLAYING LABEL ===
+local playingLabel = cMain:addLabel({
+    x = 40,
+    y = realH -3,
+    text = "[Not Playing]",
+    foreground = colors.lightGray,
+  }
 
-	-- === Bottom Panel ===
-	-- local fBottom = ExperimentalFrame.new(B, 1, monH - bottomH + 1, monW, bottomH)
-	-- fBottom:getContainer():addLabel():setText("Footer Information"):setPosition(2, 1)
+  )
+	-- :setText("[Not Playing]")
+	-- :setPosition(btnX, btnY + idx * (btnH + space))
+	-- :setForeground(colors.lightGray)
+
+-- Bind label to media_current and media_playing state
+state:onStateChange("media_current", function(_, newTrack)
+	local isPlaying = state:getState("media_playing")
+	if newTrack and isPlaying then
+		playingLabel:setText("Now Playing: " .. newTrack):setForeground(colors.lime)
+	else
+		playingLabel:setText("[Not Playing]"):setForeground(colors.lightGray)
+	end
+end)
+
+state:onStateChange("media_playing", function(_, isPlaying)
+	local track = state:getState("media_current")
+	if isPlaying and track then
+		playingLabel:setText("Now Playing: " .. track):setForeground(colors.lime)
+	else
+		playingLabel:setText("[Not Playing]"):setForeground(colors.lightGray)
+	end
+end)
+
+  
+
 
 	return self
 end

@@ -20,9 +20,10 @@ function MediaPlayer.new(stateFrame, speakerPeripheral)
 	self.currentTrack = nil
 	self.decoder = nil
 	self.handle = nil
-	self.volume = 1.0
+	self.volume = 3.0
 	self.paused = false
 	self.tracks = {}
+	self._stopRequested = false
 
 	self:_init()
 	return self
@@ -61,10 +62,11 @@ function MediaPlayer:play(trackName)
 		error("Track not found: " .. tostring(trackName))
 	end
 
-	self:stop()
+	self:stop(true) -- soft stop for async switching
 	self.currentTrack = trackName
 	self.decoder = dfpwm.make_decoder()
 	self.paused = false
+	self._stopRequested = false
 
 	local path = fs.combine(AUDIO_DIR, trackName)
 	self.handle = io.open(shell.resolve(path), "rb")
@@ -73,7 +75,7 @@ function MediaPlayer:play(trackName)
 
 	-- Launch async playback
 	parallel.waitForAny(function()
-		while self.handle do
+		while self.handle and not self._stopRequested do
 			if self.paused then
 				os.sleep(0.1)
 			else
@@ -85,6 +87,7 @@ function MediaPlayer:play(trackName)
 				local buffer = self.decoder(chunk)
 
 				while not self.speaker.playAudio(buffer, self.volume) do
+					if self._stopRequested then break end
 					os.pullEvent("speaker_audio_empty")
 				end
 			end
@@ -103,7 +106,8 @@ function MediaPlayer:resume()
 	end
 end
 
-function MediaPlayer:stop()
+function MediaPlayer:stop(isSoft)
+	self._stopRequested = true
 	if self.handle then
 		self.handle:close()
 		self.handle = nil
@@ -111,8 +115,11 @@ function MediaPlayer:stop()
 	self.speaker.stop()
 	self.currentTrack = nil
 	self.paused = false
-	self.stateFrame:setState("media_playing", false)
-	self.stateFrame:setState("media_current", nil)
+	self.decoder = nil
+	if not isSoft then
+		self.stateFrame:setState("media_playing", false)
+		self.stateFrame:setState("media_current", nil)
+	end
 end
 
 function MediaPlayer:isPlaying()
