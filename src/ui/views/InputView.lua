@@ -19,10 +19,10 @@ function InputView.new(B, state)
 
 	local monW, monH = B:getSize()
 
-  local realW = 50
-  local realH = 12
+	local realW = 50
+	local realH = 12
 
-  print("InputView: new() - Monitor size:", monW, monH)
+	print("InputView: new() - Monitor size:", monW, monH)
 
 	B:setBackground(theme.backgroundColor)
 
@@ -36,15 +36,15 @@ function InputView.new(B, state)
 	-- local btnOne = mainContainer
 	-- 	:addButton({
 	--
- --    })
-		-- :setText("Start Process")
-		-- :setPosition(2, 1)
-		-- :setSize(29, 1)
-		-- :setBackground(colors.green)
-		-- :onClick(function(button, x, y)
-		-- 	print("Process started!")
-		-- 	print("Button clicked at: " .. x .. ", " .. y)
-		-- end)
+	--    })
+	-- :setText("Start Process")
+	-- :setPosition(2, 1)
+	-- :setSize(29, 1)
+	-- :setBackground(colors.green)
+	-- :onClick(function(button, x, y)
+	-- 	print("Process started!")
+	-- 	print("Button clicked at: " .. x .. ", " .. y)
+	-- end)
 
 	-- mainContainer:addButton():setText("Stop Process"):setPosition(2, 3):setSize(29, 1):setBackground(colors.red)
 	--
@@ -63,39 +63,123 @@ function InputView.new(B, state)
 	-- 		print("D01 toggled to: " .. tostring(not current))
 	-- 	end)
 
-  local btnH = 1
-  local btnW = 4
-  local btnX = 2
-  local btnY = 1
-  local space = 0
+	local btnH = 1
+	local btnW = 4
+	local btnX = 2
+	local btnY = 1
+	local space = 0
 
+	local idx = 0
+	for key, door in pairs(DOORWAYS) do
+		local doorState = state:getState(key)
 
-  local idx = 0
-  for key, door in pairs(DOORWAYS) do
-    local doorState = state:getState(key)
+		mainContainer
+			:addButton({
+				text = door.id,
+				x = btnX,
+				y = btnY + idx * (btnH + space),
+				width = btnW,
+				height = btnH,
+				background = colors.blue,
+			})
+			:onClick(function(button, x, y)
+				local current = state:getState(key) or false
+				state:setState(key, not current)
+				print(key .. " toggled to: " .. tostring(not current))
+			end)
 
-    mainContainer:addButton({
-      text = door.id,
-      x = btnX,
-      y = btnY + idx * (btnH + space),
-      width = btnW,
-      height = btnH,
-      background = colors.blue,
-    })
-      :onClick(function(button, x, y)
-      local current = state:getState(key) or false
-      state:setState(key, not current)
-      print(key .. " toggled to: " .. tostring(not current))
+		idx = idx + 1
 
-    end)
+		-- table.insert(self.components, doorComponent)
+	end
 
-    idx = idx + 1
+	-- === Media Player Controls ===
+	idx = idx + 1
 
-    
+	mainContainer:addLabel():setText("[ MEDIA CONTROLS ]"):setPosition(btnX, btnY + idx * (btnH + space))
 
-    table.insert(self.components, doorComponent)
-  end
+	idx = idx + 1
 
+	-- Play Button
+	mainContainer
+		:addButton({
+			text = "Play",
+			x = btnX,
+			y = btnY + idx * (btnH + space),
+			width = 6,
+			height = 1,
+			background = colors.green,
+		})
+		:onClick(function()
+			if MPIO and MPIO.tracks[1] then
+				print("[MediaPlayer] Playing:", MPIO.tracks[1])
+				MPIO:play(MPIO.tracks[1])
+			else
+				print("[MediaPlayer] No track available to play.")
+			end
+		end)
+
+	-- Pause Button
+	mainContainer
+		:addButton({
+			text = "Pause",
+			x = btnX + 8,
+			y = btnY + idx * (btnH + space),
+			width = 6,
+			height = 1,
+			background = colors.yellow,
+		})
+		:onClick(function()
+			if MPIO then
+				print("[MediaPlayer] Pausing playback.")
+				MPIO:pause()
+			end
+		end)
+
+	-- Stop Button
+	mainContainer
+		:addButton({
+			text = "Stop",
+			x = btnX + 16,
+			y = btnY + idx * (btnH + space),
+			width = 6,
+			height = 1,
+			background = colors.red,
+		})
+		:onClick(function()
+			if MPIO then
+				print("[MediaPlayer] Stopping playback.")
+				MPIO:stop()
+			end
+		end)
+
+	-- Next Button
+	mainContainer
+		:addButton({
+			text = "Next",
+			x = btnX + 24,
+			y = btnY + idx * (btnH + space),
+			width = 6,
+			height = 1,
+			background = colors.cyan,
+		})
+		:onClick(function()
+			if MPIO and #MPIO.tracks > 0 then
+				local current = MPIO.stateFrame:getState("media_current")
+				local i = 0
+				for idx, track in ipairs(MPIO.tracks) do
+					if track == current then
+						i = idx
+						break
+					end
+				end
+				local nextIndex = (i % #MPIO.tracks) + 1
+				print("[MediaPlayer] Switching to next track:", MPIO.tracks[nextIndex])
+				MPIO:play(MPIO.tracks[nextIndex])
+			else
+				print("[MediaPlayer] No tracks found.")
+			end
+		end)
 
 	return self
 end

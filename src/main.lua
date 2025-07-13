@@ -8,12 +8,14 @@ local REDSTONE_INPUT = require("config").RedstoneInput
 
 local RedIO = require("common.redio")
 local PlayerDetectorIO = require("common.playerdetectorio")
+local MediaPlayer = require("common.mediaplayer")
 
 -- local selectedMonitor = nil
 local views = {}
 RedIO_In = nil
 RedIO_Out = nil
 PDIO = nil
+MPIO = nil
 
 local MONITOR_MAIN = "monitor_17"
 local MONITOR_INPUT = "monitor_18"
@@ -54,8 +56,16 @@ local function init()
 		B:initializeState("players", {})
 	end
 
-	-- B:initializeState("D_01", false, false)
-	--:initializeState("D_02", false, false)
+
+local speaker = peripheral.find("speaker") -- or peripheral.wrap("speaker_0") if fixed
+if speaker then
+	MPIO = MediaPlayer.new(B, speaker)
+else
+	B:initializeState("media_tracks", {})
+	B:initializeState("media_playing", false)
+	B:initializeState("media_current", nil)
+end
+
 
 	local mainView = MainView.new(B, B)
 	table.insert(views, mainView)
@@ -86,6 +96,11 @@ basalt.schedule(function()
 		if PDIO then
 			PDIO:update()
 		end
+
+--
+-- if MPIO then
+-- 	MPIO:update() -- (only if you create such a method later)
+-- end
 
 		os.sleep(POLL_INTERVAL)
 	end
