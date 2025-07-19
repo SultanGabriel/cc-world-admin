@@ -1,4 +1,4 @@
--- ui/views/MainView
+-- ui/views/InputView
 local Component = require('ui.component')
 local BorderedFrame = require('ui.BorderedFrame')
 local ExperimentalFrame = require('ui.ExperimentalFrame')
@@ -36,26 +36,49 @@ function InputView.new(B, state)
 
 	-- === DOORWAY BUTTONS + LABELS ===
 	for key, door in pairs(DOORWAYS) do
-		mainContainer:addLabel()
+		local label = mainContainer:addLabel()
 			:setText(door.name)
 			:setPosition(btnX + btnW + 1, btnY + idx * (btnH + space))
 
-		mainContainer:addButton({
+		local btn = mainContainer:addButton({
 			text = door.key,
 			x = btnX,
 			y = btnY + idx * (btnH + space),
 			width = btnW,
 			height = btnH,
-			background = colors.blue,
-		}):onClick(function()
+			background = colors.gray, -- default = unknown
+		})
+
+		self.components[#self.components + 1] = btn
+
+		-- Set initial button color based on state
+		local function updateColor(val)
+			if val == true then
+				btn:setBackground(colors.green)
+			elseif val == false then
+				btn:setBackground(colors.red)
+			else
+				btn:setBackground(colors.gray)
+			end
+		end
+
+		updateColor(state:getState(key))
+
+		btn:onClick(function()
 			local current = state:getState(key) or false
 			state:setState(key, not current)
 			print('[InputView] Toggled ' ..
 			key .. ' to ' .. tostring(not current))
 		end)
 
+		-- Watch for external state changes
+		state:onStateChange(key, function(_, newValue)
+			updateColor(newValue)
+		end)
+
 		idx = idx + 1
 	end
+
 
 	mainContainer:addButton({
 		text = 'Open All',
@@ -67,7 +90,7 @@ function InputView.new(B, state)
 	}):onClick(function()
 		for key, _ in pairs(DOORWAYS) do
 			if not state:getState(key) then
-				RedIO_Out:pulse_bundled_output(key)
+				RedIO_Out:pulse(key)
 				print('[Doors] Opening:', key)
 			end
 		end
@@ -85,7 +108,7 @@ function InputView.new(B, state)
 	}):onClick(function()
 		for key, _ in pairs(DOORWAYS) do
 			if state:getState(key) then
-				RedIO_Out:pulse_bundled_output(key)
+				RedIO_Out:pulse(key)
 				print('[Doors] Closing:', key)
 			end
 		end
@@ -101,7 +124,7 @@ function InputView.new(B, state)
 	}):onClick(function()
 		for key, _ in pairs(DOORWAYS) do
 			if state:getState(key) then
-				RedIO_Out:pulse_bundled_output(key)
+				RedIO_Out:pulse(key)
 				print('[Doors] Lockdown - Closing:', key)
 			end
 		end
@@ -183,10 +206,10 @@ function InputView.new(B, state)
 	return self
 end
 
-function InputView:update()
-	for _, c in ipairs(self.components) do
-		c:update()
-	end
-end
+-- function InputView:update()
+-- 	for _, c in ipairs(self.components) do
+-- 		c:update()
+-- 	end
+-- end
 
 return InputView

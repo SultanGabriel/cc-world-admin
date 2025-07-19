@@ -5,6 +5,7 @@ local EnergyView = require('views.EnergyView')
 
 local DOORWAYS = require('config').Doorways
 local REDSTONE_INPUT = require('config').RedstoneInput
+local REDSTONE_OUTPUT = require('config').RedstoneOutput
 
 local RedIO = require('common.redio')
 local PlayerDetectorIO = require('common.playerdetectorio')
@@ -46,7 +47,7 @@ local function init()
 	local redstSide = 'bottom'
 	RedIO_In = RedIO.new(redstSide, B, REDSTONE_INPUT)
 
-	RedIO_Out = RedIO.new(redstSide, B, REDSTONE_INPUT, true)
+	RedIO_Out = RedIO.new(redstSide, B, REDSTONE_OUTPUT)
 
 
 	CHATBOX = peripheral.wrap('chatBox_0')
@@ -100,11 +101,6 @@ basalt.schedule(function()
 		if PDIO then
 			PDIO:update()
 		end
-
-		--
-		-- if MPIO then
-		-- 	MPIO:update() -- (only if you create such a method later)
-		-- end
 
 		os.sleep(POLL_INTERVAL)
 	end
