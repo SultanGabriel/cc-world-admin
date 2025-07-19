@@ -1,7 +1,7 @@
 local basalt = require("lib.basalt.src")
-local MainView = require("ui.views.MainView")
-local InputView = require("ui.views.InputView")
-local EnergyView = require("ui.views.EnergyView")
+local MainView = require("views.MainView")
+local InputView = require("views.InputView")
+local EnergyView = require("views.EnergyView")
 
 local DOORWAYS = require("config").Doorways
 local REDSTONE_INPUT = require("config").RedstoneInput
@@ -123,3 +123,4 @@ parallel.waitForAny(
 		basalt.run()
 	end
 )
+
