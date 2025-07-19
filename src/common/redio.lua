@@ -170,8 +170,21 @@ function RedIO:set(name, value)
 		return
 	end
 	self.stateFrame:setState(name, value)
-end
 
+
+end
+-- fixme may not be useful at all in the end... keep it tho
+--- Public: Register a callback for all output state changes
+-- @param callback function(name: string, newValue: boolean)
+function RedIO:registerOutputChangeCallback(callback)
+	for name, cfg in pairs(self.config) do
+		if cfg.mode == "output" then
+			self.stateFrame:onStateChange(name, function(_, newValue)
+				callback(name, newValue)
+			end)
+		end
+	end
+end
 --- Public: Toggle logical output
 function RedIO:toggle(name)
 	if DEBUG_LOGS then
@@ -186,8 +199,8 @@ end
 --- Public: Pulse output (turn on briefly then off again)
 -- @param name string – logical name of output defined in config
 -- @param duration number – time in seconds to keep output on (default 0.2s)
-function RedIO:pulse(name, duration)
-	duration = duration or 0.2
+function RedIO:pulse(name, dur)
+	duration = dur or 0.5
 	local cfg = self.config[name]
 	if not cfg or cfg.mode ~= 'output' then
 		if DEBUG_LOGS then
@@ -198,15 +211,19 @@ function RedIO:pulse(name, duration)
 	end
 
 	if DEBUG_LOGS then
-		print('[RedIO] Pulsing:', name, 'for', duration, 's')
+		print('[RedIO] Pulsing:', name, 'for', duration, 's', cfg.bundled)
 	end
 
-	local function do_pulse()
+	-- local function do_pulse()
 		if cfg.bundled then
 			local cur = self.peripheral.getBundledOutput(cfg.side)
 			self.peripheral.setBundledOutput(cfg.side,
 											 colors.combine(cur, cfg.bundled))
+
+		print('[RedIO] ON')
 			sleep(duration)
+		print('[RedIO] OFF')
+
 			self.peripheral.setBundledOutput(cfg.side,
 											 colors.subtract(
 												 self.peripheral
@@ -218,12 +235,14 @@ function RedIO:pulse(name, duration)
 			self.peripheral.setOutput(cfg.side, false)
 		end
 
-		-- reflect OFF state in stateFrame
-		self.stateFrame:setState(name, false)
-	end
 
-	local thread = coroutine.create(do_pulse)
-	coroutine.resume(thread)
+		-- reflect OFF state in stateFrame
+		-- self.stateFrame:setState(name, false)
+	-- end
+
+    -- parallel.waitForAll(do_pulse)
+	-- local thread = coroutine.create(do_pulse)
+	-- coroutine.resume(thread)
 end
 
 --- Public: Get current logical state

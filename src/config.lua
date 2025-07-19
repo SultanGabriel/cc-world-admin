@@ -63,17 +63,17 @@ local Doorways = {
 		h = 2,
 	},
 }
-DOOR_INPUT_SIDE = 'top'
+DOOR_INPUT_SIDE = 'bottom'
 local RedstoneInput = {
 	D_00 = {
 		side = DOOR_INPUT_SIDE,
 		mode = 'input',
-		bundled = colors.white,
+		bundled = colors.red,
 	},
 	D_01 = {
 		side = DOOR_INPUT_SIDE,
 		mode = 'input',
-		bundled = colors.blue,
+		bundled = colors.pink,
 	},
 	D_02 = {
 		side = DOOR_INPUT_SIDE,
@@ -83,12 +83,12 @@ local RedstoneInput = {
 	D_03 = {
 		side = DOOR_INPUT_SIDE,
 		mode = 'input',
-		bundled = colors.red,
+		bundled = colors.lime,
 	},
 	D_04 = {
 		side = DOOR_INPUT_SIDE,
 		mode = 'input',
-		bundled = colors.yellow,
+		bundled = colors.blue,
 	},
 	D_05 = {
 		side = DOOR_INPUT_SIDE,
@@ -102,39 +102,39 @@ local RedstoneInput = {
 	},
 }
 
-local DOOR_OUTPUT_SIDE = 'bottom'
+local DOOR_OUTPUT_SIDE = 'right'
 local RedstoneOutput = {
-	D_00 = {
-		side = DOOR_OUTPUT_SIDE,
-		mode = 'output',
-		bundled = colors.white,
-	},
-	D_01 = {
-		side = DOOR_OUTPUT_SIDE,
-		mode = 'output',
-		bundled = colors.blue,
-	},
-	D_02 = {
-		side = DOOR_OUTPUT_SIDE,
-		mode = 'output',
-		bundled = colors.green,
-	},
-	D_03 = {
+	OUT_D_00 = {
 		side = DOOR_OUTPUT_SIDE,
 		mode = 'output',
 		bundled = colors.red,
 	},
-	D_04 = {
+	OUT_D_01 = {
 		side = DOOR_OUTPUT_SIDE,
 		mode = 'output',
-		bundled = colors.yellow,
+		bundled = colors.pink,
 	},
-	D_05 = {
+	OUT_D_02 = {
+		side = DOOR_OUTPUT_SIDE,
+		mode = 'output',
+		bundled = colors.green,
+	},
+	OUT_D_03 = {
+		side = DOOR_OUTPUT_SIDE,
+		mode = 'output',
+		bundled = colors.lime,
+	},
+	OUT_D_04 = {
+		side = DOOR_OUTPUT_SIDE,
+		mode = 'output',
+		bundled = colors.blue,
+	},
+	OUT_D_05 = {
 		side = DOOR_OUTPUT_SIDE,
 		mode = 'output',
 		bundled = colors.purple,
 	},
-	D_06 = {
+	OUT_D_06 = {
 		side = DOOR_OUTPUT_SIDE,
 		mode = 'output',
 		bundled = colors.orange,

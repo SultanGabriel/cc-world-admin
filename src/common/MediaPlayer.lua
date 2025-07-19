@@ -8,7 +8,8 @@ local MediaPlayer = {}
 MediaPlayer.__index = MediaPlayer
 
 -- Config
-local AUDIO_DIR = "src/TankMonitor/src/music"
+local AUDIO_DIR = "cc-world-admin/src/music"
+--local AUDIO_DIR = "music"
 local AUDIO_CHUNK_SIZE = 16 * 1024
 
 function MediaPlayer.new(stateFrame, speakerPeripheral)

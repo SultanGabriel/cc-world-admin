@@ -9,7 +9,7 @@ local REDSTONE_OUTPUT = require('config').RedstoneOutput
 
 local RedIO = require('common.redio')
 local PlayerDetectorIO = require('common.playerdetectorio')
-local MediaPlayer = require('common.mediaplayer')
+local MediaPlayer = require('common.MediaPlayer')
 
 -- local selectedMonitor = nil
 local views = {}
@@ -20,7 +20,7 @@ MPIO = nil
 
 local MONITOR_MAIN = 'monitor_17'
 local MONITOR_INPUT = 'monitor_18'
-local MONITOR_ENERGY = 'monitor_16'
+local MONITOR_ENERGY = 'monitor_20' -- fixme rename this mdfkr some time
 -- local MONITOR_STATS = "monitor_4"
 
 local function initState(state)
@@ -30,6 +30,11 @@ local function initState(state)
 
 	-- Initialize all door states if not already present
 	for key, _ in pairs(DOORWAYS) do
+		state:initializeState(key, false, false) -- no persistence, default: closed
+	end
+
+
+	for key, _ in pairs(REDSTONE_OUTPUT) do
 		state:initializeState(key, false, false) -- no persistence, default: closed
 	end
 end
@@ -48,6 +53,7 @@ local function init()
 	RedIO_In = RedIO.new(redstSide, B, REDSTONE_INPUT)
 
 	RedIO_Out = RedIO.new(redstSide, B, REDSTONE_OUTPUT)
+  -- RedIO_Out:registerOutputChangeCallback()
 
 
 	CHATBOX = peripheral.wrap('chatBox_0')
@@ -60,10 +66,13 @@ local function init()
 	end
 
 
-	local speaker = peripheral.find('speaker') -- or peripheral.wrap("speaker_0") if fixed
+	local speaker = peripheral.wrap('speaker_8') -- or peripheral.wrap("speaker_0") if fixed
 	if speaker then
+    print("[MAIN] Speaker found!")
+    print("[MAIN] Initiating Media Player!")
 		MPIO = MediaPlayer.new(B, speaker)
 	else
+    print("[MAIN] Speaker is not connected..")
 		B:initializeState('media_tracks', {})
 		B:initializeState('media_playing', false)
 		B:initializeState('media_current', nil)
@@ -95,6 +104,7 @@ local POLL_INTERVAL = 0.5
 basalt.schedule(function()
 	while true do
 		if RedIO_In then
+      -- print("polling rio")
 			RedIO_In:pollInputs()
 		end
 
