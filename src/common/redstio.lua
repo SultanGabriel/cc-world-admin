@@ -171,15 +171,19 @@ end
 local function pulse_output(port, duration)
 	local dir = get_io_dir(port)
 	if dir ~= IO_DIR.OUT then
-		error('Port ' .. tostring(port) .. ' is not configured as output')
+		error("Port " .. tostring(port) .. " is not configured as output")
 	end
 
-	-- Run pulse in parallel so it's non-blocking
-	parallel.waitForAny(function()
+	-- Fire and forget coroutine
+	local function do_pulse()
 		set_output(port, true)
 		sleep(duration)
 		set_output(port, false)
-	end)
+	end
+
+	-- Fork it
+	local thread = coroutine.create(do_pulse)
+	coroutine.resume(thread)
 end
 
 ---@class rsio
