@@ -186,6 +186,28 @@ local function pulse_output(port, duration)
 	coroutine.resume(thread)
 end
 
+-- Pulse a bundled output
+---@param key string The key for the bundled output
+---@param duration number Duration in seconds
+local function pulse_bundled_output(key, duration)
+	local DEFAULT_DURATION = 0.2
+	local entry = self.config[key]
+	if not entry then
+		print("[RedIO] No output defined for:", key)
+		return
+	end
+
+	local side = entry.side
+	local color = entry.color
+
+	-- Pulse
+	rs.setBundledOutput(side, colors.combine(rs.getBundledOutput(side), color))
+	sleep(duration or DEFAULT_DURATION)
+	rs.setBundledOutput(side, colors.subtract(rs.getBundledOutput(side), color))
+	print("[RedIO] Pulsed:", key, "(color:", color, ", side:", side, ")")
+end
+
+
 ---@class rsio
 ---@field IO_LVL IO_LVL
 ---@field IO_MODE IO_MODE
@@ -204,6 +226,7 @@ local rsio = {
 	get = get_input,
 	get_io_dir = get_io_dir,
 	pulse = pulse_output,
+	pulse_bundled = pulse_bundled_output,
 }
 
 -- Self-checks to validate configuration

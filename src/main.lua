@@ -46,6 +46,8 @@ local function init()
 	local redstSide = 'bottom'
 	RedIO_In = RedIO.new(redstSide, B, REDSTONE_INPUT)
 
+	RedIO_Out = RedIO.new(redstSide, B, REDSTONE_INPUT, true)
+
 
 	CHATBOX = peripheral.wrap('chatBox_0')
 	PD = peripheral.wrap('playerDetector_0')
