@@ -14,7 +14,7 @@ function PlayerCard.new(app, x, y, player)
 	local cardW = 26
 	local cardH = 5
 
-	self.container = app:addFrame():setPosition(x, y):setSize(cardW, cardH):setBackground(colors.gray)
+	self.container = app:addFrame():setPosition(x, y):setSize(cardW, cardH):setBackground(colors.black)
 
 	-- Name label
 	self.container
