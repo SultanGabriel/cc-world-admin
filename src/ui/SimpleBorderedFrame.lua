@@ -2,12 +2,12 @@ local Component = require("ui.component")
 
 local theme = require("common.theme")
 
-local ExperimentalFrame = {}
-ExperimentalFrame.__index = ExperimentalFrame
-setmetatable(ExperimentalFrame, { __index = Component })
+local SimpleBorderedFrame = {}
+SimpleBorderedFrame.__index = SimpleBorderedFrame
+setmetatable(SimpleBorderedFrame, { __index = Component })
 
-function ExperimentalFrame.new(app, x, y, w, h)
-	local self = setmetatable(Component.new(), ExperimentalFrame)
+function SimpleBorderedFrame.new(app, x, y, w, h)
+	local self = setmetatable(Component.new(), SimpleBorderedFrame)
 
 	self.borderColor = theme.borderColor or colors.black
 	self.backgroundColor = theme.backgroundColor or colors.lightGray
@@ -54,11 +54,11 @@ function ExperimentalFrame.new(app, x, y, w, h)
 	return self
 end
 
-function ExperimentalFrame:getContainer()
+function SimpleBorderedFrame:getContainer()
 	return self.inner
 end
 
-function ExperimentalFrame:setBorderColor(color)
+function SimpleBorderedFrame:setBorderColor(color)
 	self.borderColor = color
 	self.top:setBackground(color)
 	self.bottom:setBackground(color)
@@ -67,18 +67,18 @@ function ExperimentalFrame:setBorderColor(color)
 	return self
 end
 
-function ExperimentalFrame:setBackground(color)
+function SimpleBorderedFrame:setBackground(color)
 	self.backgroundColor = color
 	self.inner:setBackground(color)
 	return self
 end
 
-function ExperimentalFrame:setPosition(x, y)
+function SimpleBorderedFrame:setPosition(x, y)
 	self.container:setPosition(x, y)
 	return self
 end
 
-function ExperimentalFrame:setSize(w, h)
+function SimpleBorderedFrame:setSize(w, h)
 	self.w = w
 	self.h = h
 	self.container:setSize(w, h)
@@ -90,5 +90,5 @@ function ExperimentalFrame:setSize(w, h)
 	return self
 end
 
-return ExperimentalFrame
+return SimpleBorderedFrame
 

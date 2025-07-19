@@ -1,6 +1,6 @@
 -- components/GregMap.lua
 local Component = require("ui.component")
-local ExperimentalFrame = require("ui.ExperimentalFrame")
+local SimpleBorderedFrame = require("ui.SimpleBorderedFrame")
 
 local GregMap = {}
 GregMap.__index = GregMap
@@ -13,9 +13,9 @@ function GregMap.new(B, x, y)
 	self.y = y
 
 
-	-- local fMain = ExperimentalFrame.new(B, 1, 3, monW - sideW, monH - bottomH )
-	-- local fMain = ExperimentalFrame.new(B, 1, 3, monW, monH - bottomH)
-	-- local bfMain = ExperimentalFrame.new(B, 1, 2, realW, realH - headerH + 1)
+	-- local fMain = SimpleBorderedFrame.new(B, 1, 3, monW - sideW, monH - bottomH )
+	-- local fMain = SimpleBorderedFrame.new(B, 1, 3, monW, monH - bottomH)
+	-- local bfMain = SimpleBorderedFrame.new(B, 1, 2, realW, realH - headerH + 1)
 	-- local cMain = bfMain:getContainer()
   local cMain = B
 
@@ -26,7 +26,7 @@ function GregMap.new(B, x, y)
 	-- local yOff = 2
   -- print("xOff, yOff:", xOff, yOff)
 
-	local bfBuilding = ExperimentalFrame.new(cMain, self.x, self.y, buildingW, buildingH)
+	local bfBuilding = SimpleBorderedFrame.new(cMain, self.x, self.y, buildingW, buildingH)
 
 	local cBuilding = bfBuilding:getContainer()
 	-- local cBuilding = cMain:addFrame({
@@ -55,15 +55,15 @@ function GregMap.new(B, x, y)
 
 	local gtmoX = meW + corridor1W + serverRoomW + drawerHoleW - 4
 
-	local bfMEController = ExperimentalFrame.new(cBuilding, 0, 0, meW, innerH)
-	local bfServerRoom = ExperimentalFrame.new(cBuilding, meW + corridor1W - 2, 0, serverRoomW, topRowH)
-	local bfDrawerHole = ExperimentalFrame.new(cBuilding, meW + corridor1W + serverRoomW - 3, 0, drawerHoleW, topRowH)
+	local bfMEController = SimpleBorderedFrame.new(cBuilding, 0, 0, meW, innerH)
+	local bfServerRoom = SimpleBorderedFrame.new(cBuilding, meW + corridor1W - 2, 0, serverRoomW, topRowH)
+	local bfDrawerHole = SimpleBorderedFrame.new(cBuilding, meW + corridor1W + serverRoomW - 3, 0, drawerHoleW, topRowH)
 	local bfMePatterns =
-		ExperimentalFrame.new(cBuilding, gtmoX - meAutocraftW + 1, topRowH + corridor2H - 2, meAutocraftW, meAutocraftH)
-	local bfGTMO = ExperimentalFrame.new(cBuilding, gtmoX, 0, gtmoW, innerH)
+		SimpleBorderedFrame.new(cBuilding, gtmoX - meAutocraftW + 1, topRowH + corridor2H - 2, meAutocraftW, meAutocraftH)
+	local bfGTMO = SimpleBorderedFrame.new(cBuilding, gtmoX, 0, gtmoW, innerH)
 
-	local bfCorridor1 = ExperimentalFrame.new(cBuilding, meW - 1, 0, corridor1W, innerH)
-	local bfCorridor2 = ExperimentalFrame.new(cBuilding, meW + corridor1W - 2, topRowH - 1, corridor2W, corridor2H)
+	local bfCorridor1 = SimpleBorderedFrame.new(cBuilding, meW - 1, 0, corridor1W, innerH)
+	local bfCorridor2 = SimpleBorderedFrame.new(cBuilding, meW + corridor1W - 2, topRowH - 1, corridor2W, corridor2H)
 
 	local fCorridorWay = cBuilding:addFrame({
 		x = meW + corridor1W - 2,
@@ -73,7 +73,7 @@ function GregMap.new(B, x, y)
 		background = colors.lightGray,
 	})
 
-	local bfElevator = ExperimentalFrame.new(cBuilding, meW + corridor1W - 2, innerH - elevatorH, elevatorW, elevatorH)
+	local bfElevator = SimpleBorderedFrame.new(cBuilding, meW + corridor1W - 2, innerH - elevatorH, elevatorW, elevatorH)
 
 	local fElevatorDoor = cBuilding:addFrame({
 		x = meW + corridor1W - 2,
