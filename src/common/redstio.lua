@@ -46,9 +46,9 @@ local IO_PORT = {
 --- Mapping of ports to physical redstone sides (must be configured by user)
 ---@type table<IO_PORT, string>
 local MAPPED_SIDES = {
-	[IO_PORT.SCRAM] = "top",
-	[IO_PORT.ALARM] = "right",
-	[IO_PORT.POWER_LEVEL] = "back",
+	[IO_PORT.SCRAM] = 'top',
+	[IO_PORT.ALARM] = 'right',
+	[IO_PORT.POWER_LEVEL] = 'back',
 	-- Configure these per your setup
 }
 
@@ -126,10 +126,10 @@ local function set_output(port, value)
 	local logic = ACTIVE_LOGIC[port]
 
 	if not side then
-		error("No side mapped for port " .. tostring(port))
+		error('No side mapped for port ' .. tostring(port))
 	end
 	if not logic then
-		error("No logic defined for port " .. tostring(port))
+		error('No logic defined for port ' .. tostring(port))
 	end
 
 	if mode == IO_MODE.DIGITAL_OUT then
@@ -137,7 +137,7 @@ local function set_output(port, value)
 	elseif mode == IO_MODE.ANALOG_OUT then
 		redstone.setAnalogOutput(side, logic._out(value))
 	else
-		error("Port is not configured as output")
+		error('Port is not configured as output')
 	end
 end
 
@@ -150,10 +150,10 @@ local function get_input(port)
 	local logic = ACTIVE_LOGIC[port]
 
 	if not side then
-		error("No side mapped for port " .. tostring(port))
+		error('No side mapped for port ' .. tostring(port))
 	end
 	if not logic then
-		error("No logic defined for port " .. tostring(port))
+		error('No logic defined for port ' .. tostring(port))
 	end
 
 	if mode == IO_MODE.DIGITAL_IN then
@@ -161,8 +161,25 @@ local function get_input(port)
 	elseif mode == IO_MODE.ANALOG_IN then
 		return redstone.getAnalogInput(side)
 	else
-		error("Port is not configured as input")
+		error('Port is not configured as input')
 	end
+end
+
+--- Send a non-blocking digital pulse
+---@param port IO_PORT
+---@param duration number Duration in seconds
+local function pulse_output(port, duration)
+	local dir = get_io_dir(port)
+	if dir ~= IO_DIR.OUT then
+		error('Port ' .. tostring(port) .. ' is not configured as output')
+	end
+
+	-- Run pulse in parallel so it's non-blocking
+	parallel.waitForAny(function()
+		set_output(port, true)
+		sleep(duration)
+		set_output(port, false)
+	end)
 end
 
 ---@class rsio
@@ -182,21 +199,23 @@ local rsio = {
 	set = set_output,
 	get = get_input,
 	get_io_dir = get_io_dir,
+	pulse = pulse_output,
 }
 
 -- Self-checks to validate configuration
-rsio.NUM_PORTS = 3 -- update when adding ports
+rsio.NUM_PORTS = 3     -- update when adding ports
 rsio.NUM_DIG_PORTS = 2 -- SCRAM + ALARM
 rsio.NUM_ANA_PORTS = 1 -- POWER_LEVEL
 
-assert(rsio.NUM_PORTS == (rsio.NUM_DIG_PORTS + rsio.NUM_ANA_PORTS), "port counts inconsistent")
+assert(rsio.NUM_PORTS == (rsio.NUM_DIG_PORTS + rsio.NUM_ANA_PORTS),
+	'port counts inconsistent')
 
 local dup_chk = {}
 for _, v in pairs(IO_PORT) do
-	assert(dup_chk[v] ~= true, "duplicate in port list")
+	assert(dup_chk[v] ~= true, 'duplicate in port list')
 	dup_chk[v] = true
 end
 
-assert(#dup_chk == rsio.NUM_PORTS, "port list malformed")
+assert(#dup_chk == rsio.NUM_PORTS, 'port list malformed')
 
 return rsio
