@@ -9,8 +9,10 @@ setmetatable(SimpleBorderedFrame, { __index = Component })
 function SimpleBorderedFrame.new(app, x, y, w, h)
 	local self = setmetatable(Component.new(), SimpleBorderedFrame)
 
-	self.borderColor = theme.borderColor or colors.black
-	self.backgroundColor = theme.backgroundColor or colors.lightGray
+	self.borderColor = colors.gray
+	self.backgroundColor = colors.lightGray
+	-- self.borderColor = theme.borderColor or colors.black
+	-- self.backgroundColor = theme.backgroundColor or colors.lightGray
 	self.x = x
 	self.y = y
 	self.w = w

@@ -19,7 +19,7 @@ function InputView.new(B, state)
 	local monW, monH = B:getSize()
 
 	local realW = 50
-	local realH = 12
+	local realH = 13
 
 	print("InputView: new() - Monitor size:", monW, monH)
 	B:setBackground(theme.backgroundColor)

@@ -1,5 +1,6 @@
 -- components/PlayerCard.lua
 local Component = require("ui.component")
+local ExperimentalFrame = require("ui.ExperimentalFrame")
 
 local PlayerCard = {}
 PlayerCard.__index = PlayerCard
@@ -11,11 +12,14 @@ function PlayerCard.new(app, x, y, player)
 	self.player = player
 	self.health = math.max(0, math.min(player.health or 0, player.maxHealth or 20))
 
-	local cardW = 26
-	local cardH = 5
+	local cardW = 29
+	local cardH = 8
 
-	self.container = app:addFrame():setPosition(x, y):setSize(cardW, cardH):setBackground(colors.black)
+	-- self.container = app:addFrame():setPosition(x, y):setSize(cardW, cardH):setBackground(colors.black)
 
+	self.base = ExperimentalFrame.new(app, x, y, cardW, cardH)
+
+  self.container = self.base:getContainer()
 	-- Name label
 	self.container
 		:addLabel()
@@ -24,19 +28,19 @@ function PlayerCard.new(app, x, y, player)
 		:setForeground(colors.yellow)
 
 	-- Health bar background
-	self.container:addFrame():setPosition(2, 2):setSize(cardW - 2, 1):setBackground(colors.black)
+	self.container:addFrame():setPosition(2, 2):setSize(cardW - 4, 1):setBackground(colors.black)
 
 	-- Health bar foreground
 	self.healthBar = self.container
 		:addFrame()
 		:setPosition(2, 2)
-		:setSize(math.floor((cardW - 2) * (self.health / player.maxHealth)), 1)
+		:setSize(math.floor((cardW - 4) * (self.health / player.maxHealth)), 1)
 		:setBackground(colors.red)
 
   -- Health label
   self.healthLabel = self.container
     :addLabel({
-    x = cardW - 7,
+    x = cardW - 9,
     y = 1,
     text = string.format("%d/%d", self.health, player.maxHealth or 'N/A'),
     foreground = colors.white,

@@ -33,7 +33,7 @@ function MainView.new(B, state)
 	B:setBackground(theme.backgroundColor)
 
 	-- === Header ===
-	local headerH = 2
+	local headerH = 1
 	local fHeader = B:addFrame({
 		x = 1,
 		y = 1,
@@ -53,17 +53,17 @@ function MainView.new(B, state)
 	table.insert(self.components, clock)
 
 	-- === Main ===
-	local sideW = 30
+	local sideW = 34
 	local bottomH = 8
 
-	local xOff = (realW / 2 ) - 36
-  local yOff = 6
-  local gregMap = GregMap.new(B, xOff, yOff)
+	local xOff = (realW / 2) - 34
+	local yOff = 6
+	local gregMap = GregMap.new(B, xOff, yOff)
 
 	-- === Doorways === --
 
-	local doorXOff = 1
-	local doorYOff = yOff -1
+	local doorXOff = 3
+	local doorYOff = yOff - 1
 
 	for _, doorData in pairs(DOORWAYS) do
 		-- local door = Door.new(cBuilding, doorData.id,doorData.x, doorData.y, doorData.w, doorData.h)
@@ -82,32 +82,36 @@ function MainView.new(B, state)
 
 	-- === Me Controller  === --
 
-	local wMEController = MEController.new(B, state, "MEController", 4, 4)
+	-- local wMEController = MEController.new(B, state, "MEController", 4, 4)
 
-  -- ======================================== --
-  --                                          --
-  --                                          --
-  -- ==============Sidebars=============== --
+	-- ======================================== --
+	--                                          --
+	--                                          --
+	-- ==============Sidebars=============== --
 
 	-- === Player List  === --
 
-  -- local playersList = ExperimentalFrame.new(cMain,0,0,30, realH-1)
-  -- local cPlayerList = playersList:getContainer()
-  local cPlayerList = B:addFrame({
-    x = 0,
-    y = 0, 
-    width=30,
-    height= realH-1,
-    background= colors.gray
-  })
+	-- local cPlayerList = playersList:getContainer()
+	--
+	-- local test = ExperimentalFrame.new(B,20,20,30, realH-1)
+	local framePlayerList = ExperimentalFrame.new(B, 2, 3, sideW, realH - 1)
+	local cPlayerList = framePlayerList:getContainer()
 
+	-- local cPlayerList = B:addFrame({
+	--   x = 0,
+	--   y = 0,
+	--   width=30,
+	--   height= realH-1,
+	--   background= colors.gray
+	-- })
 
-  cPlayerList:addLabel({
-    x = 8,
-    y = 2,
-    text = "Players Online",
-    foreground = colors.black
-  })
+	--
+	-- cPlayerList:addLabel({
+	--   x = 8,
+	--   y = 2,
+	--   text = "Players Online",
+	--   foreground = colors.black
+	-- })
 
 	local function clearChildren(frame)
 		for _, child in ipairs(frame:getChildren()) do
@@ -127,51 +131,49 @@ function MainView.new(B, state)
 		end
 	end)
 
-
--- === CURRENTLY PLAYING LABEL ===
-local playingLabel = B:addLabel({
-    x = 40,
-    y = realH -3,
-    text = "[Not Playing]",
-    foreground = colors.lightGray,
-  }
-
-  )
+	-- === CURRENTLY PLAYING LABEL ===
+	local playingLabel = B:addLabel({
+		x = 40,
+		y = realH - 3,
+		text = "[Not Playing]",
+		foreground = colors.lightGray,
+	}
+)
 	-- :setText("[Not Playing]")
 	-- :setPosition(btnX, btnY + idx * (btnH + space))
 	-- :setForeground(colors.lightGray)
 
--- Bind label to media_current and media_playing state
-state:onStateChange("media_current", function(_, newTrack)
-	local isPlaying = state:getState("media_playing")
-	if newTrack and isPlaying then
-		playingLabel:setText("Now Playing: " .. newTrack):setForeground(colors.lime)
-	else
-		playingLabel:setText("[Not Playing]"):setForeground(colors.lightGray)
-	end
-end)
+	-- Bind label to media_current and media_playing state
+	state:onStateChange("media_current", function(_, newTrack)
+		local isPlaying = state:getState("media_playing")
+		if newTrack and isPlaying then
+			playingLabel:setText("Now Playing: " .. newTrack):setForeground(colors.lime)
+		else
+			playingLabel:setText("[Not Playing]"):setForeground(colors.lightGray)
+		end
+	end)
 
-state:onStateChange("media_playing", function(_, isPlaying)
-	local track = state:getState("media_current")
-	if isPlaying and track then
-		playingLabel:setText("Now Playing: " .. track):setForeground(colors.lime)
-	else
-		playingLabel:setText("[Not Playing]"):setForeground(colors.lightGray)
-	end
-end)
-
+	state:onStateChange("media_playing", function(_, isPlaying)
+		local track = state:getState("media_current")
+		if isPlaying and track then
+			playingLabel:setText("Now Playing: " .. track):setForeground(colors.lime)
+		else
+			playingLabel:setText("[Not Playing]"):setForeground(colors.lightGray)
+		end
+	end)
 
 	-- === Indicator Panel === --
 
-  -- local playersList = ExperimentalFrame.new(cMain,0,0,30, realH-1)
-  local fIndicatorPanel = B:addFrame({
-    x = realW - 30,
-    y = 0,
-    width= 30,
-    height = realH-1,
-    background = colors.gray,
-  })
-
+	-- local playersList = ExperimentalFrame.new(cMain,0,0,30, realH-1)
+	local fIndicatorPanel = ExperimentalFrame.new(B, realW-sideW, 3, sideW, realH-1)
+  local cIndicators = ExperimentalFrame:getContainer()
+	--  B:addFrame({
+	-- 	x = realW - sideW,
+	-- 	y = 3,
+	-- 	width = sideW,
+	-- 	height = realH - 1,
+	--
+	-- })
 
 	return self
 end

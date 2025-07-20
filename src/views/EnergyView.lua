@@ -28,7 +28,7 @@ function EnergyView.new(B, state)
 	B:setBackground(theme.backgroundColor)
 
 	-- === Header ===
-	local fHeader = B:addFrame():setPosition(1, 1):setSize(realW, 2):setBackground(theme.headerBackgroundColor)
+	local fHeader = B:addFrame():setPosition(1, 1):setSize(realW, 1):setBackground(theme.headerBackgroundColor)
 
 	fHeader:addLabel({
 		x = monW / 2 - 21,
@@ -43,7 +43,7 @@ function EnergyView.new(B, state)
 	--   :setForeground(colors.white)
 
 	-- === Main ===
-	local fMain = ExperimentalFrame.new(B, 1, 3, realW, realH - 2)
+	local fMain = ExperimentalFrame.new(B, 1, 3, realW, realH - 1)
 	local mainContainer = fMain:getContainer()
 
 	-- local matrix = MatrixStatusFrame.new(mainContainer, 2, 2)
