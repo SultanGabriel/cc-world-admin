@@ -182,7 +182,42 @@ function PlayerDetectorIO:_say(message)
 end
 
 function PlayerDetectorIO:_zoneEnter(player, zone)
-	self:_say("&a" .. player .. " &7entered &b" .. zone.name)
+	-- self:_say("&a" .. player .. " &7entered &b" .. zone.name)
+	local message = {
+		"",
+		{
+			text = "[Domn' Paznic]: ",
+			bold = true,
+			color = "dark_red",
+			hoverEvent = {
+				action = "show_text",
+				contents = {
+					"",
+					{ text = "12345678912345678", obfuscated = true, color = "gold" },
+					{ text = "\n        El e omu'      \n", color = "gold" },
+					{ text = "12345678912345678", obfuscated = true, color = "gold" },
+				},
+			},
+		},
+		{
+			text = player,
+			color = "yellow",
+
+			hoverEvent = {
+				action = "show_entity",
+				contents = {
+					{ name = player }
+				},
+			},
+		},
+		{ text = " has entered " },
+		{ text = zone.name, bold = true },
+		{ text = "!" },
+	}
+
+	local json = textutils.serialiseJSON(message)
+
+	self.chatBox.sendFormattedMessage(json, "#")
 end
 
 function PlayerDetectorIO:enableEventLoop(flag)
