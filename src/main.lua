@@ -6,6 +6,7 @@ local EnergyView = require('views.EnergyView')
 local DOORWAYS = require('config').Doorways
 local REDSTONE_INPUT = require('config').RedstoneInput
 local REDSTONE_OUTPUT = require('config').RedstoneOutput
+local INDICATORS = require('config').Indicators
 
 local RedIO = require('common.redio')
 local PlayerDetectorIO = require('common.playerdetectorio')
@@ -37,6 +38,10 @@ local function initState(state)
 	for key, _ in pairs(REDSTONE_OUTPUT) do
 		state:initializeState(key, false, false) -- no persistence, default: closed
 	end
+
+	for key, _ in pairs(INDICATORS) do
+		state:initializeState(key, false, false) -- no persistence, default: closed
+	end
 end
 
 local function init()
@@ -53,7 +58,7 @@ local function init()
 	RedIO_In = RedIO.new(redstSide, B, REDSTONE_INPUT)
 
 	RedIO_Out = RedIO.new(redstSide, B, REDSTONE_OUTPUT)
-  -- RedIO_Out:registerOutputChangeCallback()
+	-- RedIO_Out:registerOutputChangeCallback()
 
 
 	CHATBOX = peripheral.wrap('chatBox_0')
@@ -61,18 +66,23 @@ local function init()
 
 	if PD ~= nil then
 		PDIO = PlayerDetectorIO.new(B, PD, CHATBOX)
+		B:setState('PDIO', true)
+		print('[MAIN] PlayerDetectorIO initialized!')
+
 	else
 		B:initializeState('players', {})
+
+		B:setState('PDIO', false)
 	end
 
 
 	local speaker = peripheral.wrap('speaker_8') -- or peripheral.wrap("speaker_0") if fixed
 	if speaker then
-    print("[MAIN] Speaker found!")
-    print("[MAIN] Initiating Media Player!")
+		print('[MAIN] Speaker found!')
+		print('[MAIN] Initiating Media Player!')
 		MPIO = MediaPlayer.new(B, speaker)
 	else
-    print("[MAIN] Speaker is not connected..")
+		print('[MAIN] Speaker is not connected..')
 		B:initializeState('media_tracks', {})
 		B:initializeState('media_playing', false)
 		B:initializeState('media_current', nil)
@@ -86,14 +96,14 @@ local function init()
 	local monitorInput = peripheral.wrap(MONITOR_INPUT)
 	if monitorInput then
 		local inputView = InputView.new(
-		basalt.createFrame():setTerm(monitorInput), B)
+			basalt.createFrame():setTerm(monitorInput), B)
 		table.insert(views, inputView)
 	end
 
 	local monitorEnergy = peripheral.wrap(MONITOR_ENERGY)
 	if monitorEnergy then
 		local energyView = EnergyView.new(
-		basalt.createFrame():setTerm(monitorEnergy), B)
+			basalt.createFrame():setTerm(monitorEnergy), B)
 		table.insert(views, energyView)
 	end
 end
@@ -104,7 +114,6 @@ local POLL_INTERVAL = 0.5
 basalt.schedule(function()
 	while true do
 		if RedIO_In then
-      -- print("polling rio")
 			RedIO_In:pollInputs()
 		end
 
@@ -112,24 +121,18 @@ basalt.schedule(function()
 			PDIO:update()
 		end
 
+		for _, view in ipairs(views) do
+			-- print("Updating view: " .. tostring(view))
+			view:update()
+		end
+
 		os.sleep(POLL_INTERVAL)
 	end
 end)
 
-parallel.waitForAny(
--- View update loop
-	function()
-		while true do
-			for _, view in ipairs(views) do
-				-- print("Updating view: " .. tostring(view))
-				view:update()
-			end
-			sleep(1)
-		end
-	end,
-
-	-- Basalt update loop
-	function()
-		basalt.run()
-	end
-)
+-- parallel.waitForAny(
+-- 	-- Basalt update loop
+-- 	function()
+basalt.run()
+-- 	end
+-- )

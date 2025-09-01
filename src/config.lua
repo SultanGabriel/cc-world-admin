@@ -148,7 +148,7 @@ local Zones = {
 		max = { x = -28, z = -83 }
 	},
 	{
-		name = 'Sobranie Srl',
+		name = 'Valvaroz Srl',
 		min = { x = -113, z = 55 },
 		max = { x = -87, z = 121 }
 	},
@@ -174,6 +174,46 @@ local Zones = {
 		max = { x = -311, z = -127 },
     joke = 'Straluceste putin, dar ii buna!'
 	},
+	{
+		name = 'Cernavoda SRL',
+		min = { x = -43, z = -36 },
+		max = { x = 32, z = -37 }
+	},
+}
+
+Indicators = {
+	D_RSI = {
+		id = 'D_RSI',
+		name = 'Doors Redstone Input',
+	},
+	D_RSO = {
+		id = 'D_RSO',
+		name = 'Doors Redstone Output',
+	},
+	D_CHAT = {
+		id = 'D_CHAT',
+		name = 'Chat Box',
+	},
+	MEIO = {
+		id = 'MEIO',
+		name = 'ME System',
+	},
+	PDIO = {
+		id = 'PDIO',
+		name = 'Player Detector',
+	},
+	MPIO = {
+		id = 'MPIO',
+		name = 'Media Player',
+	},
+	ZONES = {
+		id = 'ZONES',
+		name = 'Domn\' Paznic zones detection'
+	},
+	RANDOM_FACT = {
+		id = 'RANDOM_FACT',
+		name = 'Random Facts Broadcasts',
+	}
 }
 
 return {
@@ -181,5 +221,5 @@ return {
 	RedstoneInput = RedstoneInput,
 	RedstoneOutput = RedstoneOutput,
 	Zones = Zones,
+	Indicators = Indicators
 }
-

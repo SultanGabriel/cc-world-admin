@@ -4,6 +4,7 @@
 
 local ZONES = require("config").Zones
 local FORMAT = require("common.format")
+local INDICATORS = require("config").Indicators
 
 local PlayerDetectorIO = {}
 PlayerDetectorIO.__index = PlayerDetectorIO
