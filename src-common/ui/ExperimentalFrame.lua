@@ -1,6 +1,6 @@
 local Component = require("ui.component")
 
-local theme = require("common.theme")
+local theme = require("theme")
 
 local ExperimentalFrame = {}
 ExperimentalFrame.__index = ExperimentalFrame

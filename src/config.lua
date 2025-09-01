@@ -221,5 +221,5 @@ return {
 	RedstoneInput = RedstoneInput,
 	RedstoneOutput = RedstoneOutput,
 	Zones = Zones,
-	Indicators = Indicators
+	Indicators = Indicators -- FIXME the fuck is this? 
 }

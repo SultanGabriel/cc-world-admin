@@ -1,6 +1,6 @@
 -- components/dynamic_tank.lua
 local Component = require("ui.component")
-local format = require("common.format")
+local format = require("format")
 
 local TankComponent = {}
 TankComponent.__index = TankComponent

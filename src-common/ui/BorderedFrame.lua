@@ -1,5 +1,5 @@
 local Component = require("ui.component")
-local theme = require("common.theme")
+local theme = require("theme")
 
 
 local BorderedFrame = {}

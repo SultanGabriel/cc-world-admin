@@ -5,7 +5,7 @@ local ExperimentalFrame = require("ui.ExperimentalFrame")
 
 local DOORWAYS = require("config").Doorways
 
-local theme = require("common.theme")
+local theme = require("theme")
 
 local InputView = {}
 InputView.__index = InputView

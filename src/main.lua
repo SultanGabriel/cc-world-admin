@@ -1,4 +1,9 @@
-local basalt = require('lib.basalt.src')
+
+package.path = package.path .. ";../lib/Basalt/release/?.lua"
+package.path = package.path .. ";../src-common/?.lua"
+
+
+local basalt = require('basalt')
 local MainView = require('views.MainView')
 local InputView = require('views.InputView')
 local EnergyView = require('views.EnergyView')
@@ -8,9 +13,9 @@ local REDSTONE_INPUT = require('config').RedstoneInput
 local REDSTONE_OUTPUT = require('config').RedstoneOutput
 local INDICATORS = require('config').Indicators
 
-local RedIO = require('common.redio')
-local PlayerDetectorIO = require('common.playerdetectorio')
-local MediaPlayer = require('common.MediaPlayer')
+local RedIO = require('redio')
+local PlayerDetectorIO = require('playerdetectorio')
+local MediaPlayer = require('MediaPlayer')
 
 -- local selectedMonitor = nil
 local views = {}

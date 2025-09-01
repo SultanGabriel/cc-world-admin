@@ -10,7 +10,7 @@ local PlayerCard = require("ui.PlayerCard")
 local MEController = require("ui.widgets.MEController")
 local DOORWAYS = require("config").Doorways
 
-local theme = require("common.theme")
+local theme = require("theme")
 
 local MainView = {}
 MainView.__index = MainView

@@ -3,11 +3,10 @@ local Component = require("ui.component")
 local BorderedFrame = require("ui.BorderedFrame")
 local ExperimentalFrame = require("ui.ExperimentalFrame")
 local MatrixStatusFrame = require("ui.MatrixComponent")
-local basalt = require("lib.basalt.src")
 
 local DOORWAYS = require("config").Doorways
 
-local theme = require("common.theme")
+local theme = require("theme")
 
 local EnergyView = {}
 EnergyView.__index = EnergyView

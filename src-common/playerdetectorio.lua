@@ -1,9 +1,10 @@
 -- lib/PlayerDetectorIO.lua
+package.path = package.path .. ";../src-common/?.lua"
 
 --- A wrapper around the playerDetector peripheral using state and event binding
 
 local ZONES = require("config").Zones
-local FORMAT = require("common.format")
+local FORMAT = require("format")
 local INDICATORS = require("config").Indicators
 
 local PlayerDetectorIO = {}
