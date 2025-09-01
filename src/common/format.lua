@@ -21,5 +21,30 @@ function M.formatMillibuckets(mb)
     end
 end
 
+--- Splits a string into parts separated by a delimiter.
+-- @param str (string) The input string to split.
+-- @param sep (string) The separator (single character or Lua pattern).
+-- @return table An array-like table of substrings. 
+--   If `str` is an empty string, returns {""}.
+-- @usage
+-- local parts = split("a,b,,c", ",")
+-- -- parts = { "a", "b", "", "c" }
+function M.split(inputstr, sep)
+   -- if sep is null, set it as space
+   if sep == nil then
+      sep = '%s'
+   end
+   -- define an array
+   local t={}
+   -- split string based on sep   
+   for str in string.gmatch(inputstr, '([^'..sep..']+)') 
+   do
+      -- insert the substring in table
+      table.insert(t, str)
+   end
+   -- return the array
+   return t
+end
+
 return M
 

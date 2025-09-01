@@ -12,6 +12,12 @@ function PlayerCard.new(app, x, y, player)
 	self.player = player
 	self.health = math.max(0, math.min(player.health or 0, player.maxHealth or 20))
 
+  if player.name ~= nil then 
+    player.name ="ANONYMUS SMR"
+    player.maxHealth = 0
+    player.health = 0
+  end
+
 	local cardW = 29
 	local cardH = 8
 

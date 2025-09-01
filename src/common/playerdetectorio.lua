@@ -3,6 +3,7 @@
 --- A wrapper around the playerDetector peripheral using state and event binding
 
 local ZONES = require("config").Zones
+local FORMAT = require("common.format")
 
 local PlayerDetectorIO = {}
 PlayerDetectorIO.__index = PlayerDetectorIO
@@ -128,8 +129,10 @@ function PlayerDetectorIO:PlayerEventLoop()
 		self:_say("&c" .. a .. " &7left the server")
 	elseif event == "playerChangedDimension" then
 		log("DimChange: " .. a .. " from " .. b .. " to " .. c)
+    self:_dimChange(a, c)
 
-		self:_say("&d" .. a .. " &7changed dimension")
+		-- self:_say("&d" .. a .. " &7changed dimension")
+
 	end
 end
 
@@ -141,6 +144,13 @@ function PlayerDetectorIO:_runZoneCheck()
 		if pos == nil then
 			return false
 		end
+    if pos.x == nil then
+      return false
+    end
+    if pos.y == nil then
+        return false
+    end
+
 		if zone == nil then
 			return false
 		end
@@ -183,6 +193,11 @@ end
 
 function PlayerDetectorIO:_zoneEnter(player, zone)
 	-- self:_say("&a" .. player .. " &7entered &b" .. zone.name)
+  local joke = ""
+  if zone.joke ~= nil then
+    joke = zone.joke
+  end
+  
 	local message = {
 		"",
 		{
@@ -212,12 +227,89 @@ function PlayerDetectorIO:_zoneEnter(player, zone)
 		},
 		{ text = " has entered " },
 		{ text = zone.name, bold = true },
-		{ text = "!" },
+		{ text = "! " },
+		{ text = joke },
 	}
 
 	local json = textutils.serialiseJSON(message)
 
 	self.chatBox.sendFormattedMessage(json, "#")
+end
+
+function PlayerDetectorIO:_dimChange(player, dimension)
+    -- Expecting `dimension` like "minecraft:overworld", "minecraft:the_nether", "minecraft:the_end"
+    log("DimChange: " .. player .. " to " .. dimension)
+
+    -- local scope everything
+    local sp = FORMAT.split(dimension, ":")  -- must return array-like table
+    -- local sp = {""}
+    local rawDim = nil
+    local dimName = "Pizdaa Masii... (This is an error message, if you see this, then I fucked up the code, or this shit is fucket.)"
+    local action = " s-o dus in "
+
+    -- pick the right token safely
+    -- If split returns {"minecraft","the_nether"} we want index 2; otherwise fall back.
+    if type(sp) == "table" then
+        if #sp >= 2 and sp[2] ~= "" then
+            rawDim = sp[2]
+        elseif #sp >= 1 and sp[1] ~= "" then
+            rawDim = sp[1]
+        end
+    end
+    if not rawDim or rawDim == "" then
+        rawDim = dimension or ""
+    end
+
+    -- Map canonical Minecraft IDs to display names/action
+    -- Minecraft uses "overworld", "the_nether", "the_end"
+    local pretty = {
+        overworld   = "Lume",
+        the_nether  = "Satana!",
+        the_end     = "La Dragon!"
+    }
+
+    if rawDim == "the_nether" then
+        action = " s-o dus la "
+    end
+
+    dimName = pretty[rawDim] or rawDim
+
+    -- Build chat component (Advanced Peripherals Chat Box–style JSON)
+    local message = {
+        "",
+        {
+            text  = "[Domn' Paznic]: ",
+            bold  = true,
+            color = "dark_red",
+            hoverEvent = {
+                action   = "show_text",
+                contents = {
+                    "",
+                    { text = "12345678912345678", obfuscated = true, color = "gold" },
+                    { text = "\n        El e omu'      \n", color = "gold" },
+                    { text = "12345678912345678", obfuscated = true, color = "gold" },
+                },
+            },
+        },
+        {
+            text  = player,
+            color = "yellow",
+            hoverEvent = {
+                action   = "show_entity",
+                contents = {
+                    -- For vanilla show_entity you usually want: {type="minecraft:player", id="<uuid>", name=player}
+                    -- If you don’t have UUID, name-only may still render in some clients/mods.
+                    { name = player }
+                },
+            },
+        },
+        { text = action },
+        { text = dimName, bold = true },
+        { text = "!" },
+    }
+
+    local json = textutils.serialiseJSON(message)
+    self.chatBox.sendFormattedMessage(json, "#")
 end
 
 function PlayerDetectorIO:enableEventLoop(flag)

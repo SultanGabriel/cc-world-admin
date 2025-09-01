@@ -137,6 +137,30 @@ function InputView.new(B, state)
 			end
 		end)
 
+	mainContainer
+		:addButton({
+			text = "Toggle ZoneCheck",
+			x = 15,
+			y = 5,
+			width = 10,
+			height = 1,
+			background = colors.gray,
+		})
+		:onClick(function()
+			-- for key, _ in pairs(DOORWAYS) do
+      
+      value = state:getState()
+
+			print("[InputView] Toggled PDIO ZONES ENABLED TO " )--.. value)
+     --.. ' to ' .. tostring(not current))
+      state:setState("PDIO_Zones_Enabled", not value)
+      -- if state:getState(key) then
+      --   RedIO_Out:pulse("OUT_" .. key)
+      --   print("[Doors] Lockdown - Closing:", key)
+      -- end
+			-- end
+		end)
+
 	-- === MEDIA PLAYER CONTROLS ===
 	local mediaY = realH - 2
 	local mediaX = btnX

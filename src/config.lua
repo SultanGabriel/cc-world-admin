@@ -155,7 +155,8 @@ local Zones = {
 	{
 		name = 'GregTech Factory',
 		min = { x = -301, z = 47 },
-		max = { x = -130, z = 131 }
+		max = { x = -130, z = 131 },
+    joke = 'The grind is unreal....'
 	},
 	{
 		name = 'Spawn',
@@ -168,9 +169,10 @@ local Zones = {
 		max = { x = -356, z = -728 }
 	},
 	{
-		name = 'Chernobyl',
-		min = { x = -317, z = -183 },
-		max = { x = -368, z = -143 }
+		name = 'Fabrica de Ciocolata',
+		min = { x = -377, z = -181 },
+		max = { x = -311, z = -127 },
+    joke = 'Straluceste putin, dar ii buna!'
 	},
 }
 
