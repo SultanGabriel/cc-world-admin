@@ -7,8 +7,10 @@ local Door = require("ui.Door")
 local GregMap = require("ui.GregMap")
 local PlayerCard = require("ui.PlayerCard")
 
-local MEController = require("ui.widgets.MEController")
+-- local MEController = require("ui.MEController")
+local Indicator = require("ui.Indicator")
 local DOORWAYS = require("config").Doorways
+local INDICATORS = require("config").Indicators
 
 local theme = require("theme")
 
@@ -165,8 +167,24 @@ function MainView.new(B, state)
 	-- === Indicator Panel === --
 
 	-- local playersList = ExperimentalFrame.new(cMain,0,0,30, realH-1)
-	local fIndicatorPanel = ExperimentalFrame.new(B, realW-sideW, 3, sideW, realH-1)
-  local cIndicators = ExperimentalFrame:getContainer()
+
+	-- local framePlayerList = ExperimentalFrame.new(B, 2, 3, sideW, realH - 1)
+	local fIndicatorPanel = ExperimentalFrame.new(B, realW-sideW, 3, sideW - 4, realH-4)
+	assert(fIndicatorPanel, "fIndicatorPanel is nil")
+	local cIndicators = fIndicatorPanel:getContainer()
+	local xOff_ind = 2
+	for key, i in pairs(INDICATORS) do
+		-- function Indicator.new(app, x, y, key)
+		local ind = Indicator.new(cIndicators, 3, xOff_ind, key, state)
+		xOff_ind = xOff_ind + 2
+
+		for a,b in pairs(i) do
+			print(key, "Indicator data:", a, b)
+		end
+	end
+
+	print("MainView: new() - Created", #INDICATORS, "indicators.")
+	print(INDICATORS)
 	--  B:addFrame({
 	-- 	x = realW - sideW,
 	-- 	y = 3,

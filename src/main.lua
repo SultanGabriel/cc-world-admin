@@ -31,21 +31,21 @@ local MONITOR_ENERGY = 'monitor_20' -- fixme rename this mdfkr some time
 
 local function initState(state)
 	if not state then
-		error('State cannot be nil')
+		error('State Object cannot be nil')
 	end
 
-	-- Initialize all door states if not already present
+	-- Initialize all states 
 	for key, _ in pairs(DOORWAYS) do
-		state:initializeState(key, false, false) -- no persistence, default: closed
+		state:initializeState(key, false, false) 
 	end
 
 
 	for key, _ in pairs(REDSTONE_OUTPUT) do
-		state:initializeState(key, false, false) -- no persistence, default: closed
+		state:initializeState(key, false, false) 
 	end
 
 	for key, _ in pairs(INDICATORS) do
-		state:initializeState(key, false, false) -- no persistence, default: closed
+		state:initializeState(key, false, false) 
 	end
 end
 
