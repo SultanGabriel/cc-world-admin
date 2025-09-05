@@ -1,14 +1,22 @@
 # CC: World Admin
 
-Hello! This is the repository for my ComputerCraft: Tweaked project, World Admin. This project is a monitoring and management tool for your energy storage and factory monitoring needs. 
+This is the repository for my ComputerCraft: Tweaked project(s), which all are supposed to be connected to a central node for monitoring and stuff. This project is a monitoring and management tool for `stuff` (Silly Trash Unhelpful F***ing F\*\*k.). Why am I doing this? I'm just having fun.
 
 ## Disclaimer
-This project is still in its early stages of development. As such, it is not recommended to use this in any environmennt. As of now only a part of the UI is working as a proof of concept and some utilities are set up, but not fully implemented.
-
-We'll see how this goes! It may be a while before this project is fully functional, but what you gonna do? ¯\\_(ツ)_/¯
+Don't try this at home!
 
 ## Dependencies:
 
 - ComputerCraft: Tweaked (Forge: 1.20.1)
 - UI Framework: [Basalt](https://github.com/Pyroxenium/Basalt)
 
+#### Branches
+ - 'main': main branch
+ - 'side': GregAdmin before it got merged
+ - 'old': WorldAdmin before being overwritten by 'side', which was TankMonitor Project
+
+If you are wondering, yes this is a mess, but it's just a fun side project.
+
+## LICENSE
+My stuff uses basalt as a library, so respect their License. 
+For my code, do whatever you want with it.
