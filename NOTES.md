@@ -1,5 +1,10 @@
 # Notes
 
+-- monitor res: 7x5 per block
+
+
+
+## Todos, plan, whatever
  - Indicators Feature with togglable modules / scripts
  - Clean up main view files, you know it's all a mess
  - Networking with other nodes?

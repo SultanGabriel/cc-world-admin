@@ -57,9 +57,13 @@ function PlayerDetectorIO:_init()
 	log("Initializing PlayerDetectorIO...")
 
 	-- Initial state setup
-	self.stateFrame:initializeState("players", {})
-	self.stateFrame:initializeState("PDIO_Zones_Enabled", self.enableZones)
-	self.stateFrame:initializeState("PDIO_Events_Enabled", self.enableEvents)
+	-- self.stateFrame:initializeState("players", {})
+	-- self.stateFrame:initializeState("PDIO_Zones_Enabled", self.enableZones)
+	-- self.stateFrame:initializeState("PDIO_Events_Enabled", self.enableEvents)
+
+	self.stateFrame:setState("players", self.players)
+	self.stateFrame:setState("PDIO_Zones_Enabled", self.enableZones)
+	self.stateFrame:setState("PDIO_Events_Enabled", self.enableEvents)
 
 	-- Set up event listeners
 	self.stateFrame:onStateChange("PDIO_Zones_Enabled", function(_, enabled)

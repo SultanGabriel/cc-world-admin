@@ -18,5 +18,5 @@ Don't try this at home!
 If you are wondering, yes this is a mess, but it's just a fun side project.
 
 ## LICENSE
-My stuff uses basalt as a library, so respect their License. 
+My stuff uses basalt as the main UI library, so respect their License. 
 For my code, do whatever you want with it.

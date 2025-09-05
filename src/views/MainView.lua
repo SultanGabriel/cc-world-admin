@@ -1,24 +1,24 @@
--- ui/views/MainView
-local Component = require("ui.component")
-local Clock = require("ui.ClockComponent")
-local BorderedFrame = require("ui.BorderedFrame")
-local ExperimentalFrame = require("ui.ExperimentalFrame")
-local Door = require("ui.Door")
-local GregMap = require("ui.GregMap")
-local PlayerCard = require("ui.PlayerCard")
+local Component = require('ui.component')
+local Clock = require('ui.ClockComponent')
+local BorderedFrame = require('ui.BorderedFrame')
+local ExperimentalFrame = require('ui.ExperimentalFrame')
+local Door = require('ui.Door')
+local GregMap = require('ui.GregMap')
+local PlayerCard = require('ui.PlayerCard')
 
 -- local MEController = require("ui.MEController")
-local Indicator = require("ui.Indicator")
-local DOORWAYS = require("config").Doorways
-local INDICATORS = require("config").Indicators
+local INDICATOR = require('ui.Indicator')
+local DOORWAYS = require('config').Doorways
+local INDICATORS = require('config').Indicators
 
-local theme = require("theme")
+local theme = require('theme')
 
 local MainView = {}
 MainView.__index = MainView
 setmetatable(MainView, { __index = Component })
 
--- monitor res: 7x5 per block
+-- FIXME
+FEATUREFLAG_INDICATORS = false
 
 function MainView.new(B, state)
 	local self = setmetatable(Component.new(), MainView)
@@ -27,7 +27,7 @@ function MainView.new(B, state)
 	self.state = state or {}
 
 	local monW, monH = B:getSize()
-	print("MainView: new() - Monitor size:", monW, monH)
+	print('MainView: new() - Monitor size:', monW, monH)
 
 	local realW = 157
 	local realH = 33
@@ -47,7 +47,7 @@ function MainView.new(B, state)
 	fHeader:addLabel({
 		x = realW / 2 - 20,
 		y = 1,
-		text = "GregTech Factory Central Monitoring System",
+		text = 'GregTech Factory Central Monitoring System',
 		foreground = colors.white,
 	})
 
@@ -107,13 +107,13 @@ function MainView.new(B, state)
 	--   background= colors.gray
 	-- })
 
-	--
-	-- cPlayerList:addLabel({
-	--   x = 8,
-	--   y = 2,
-	--   text = "Players Online",
-	--   foreground = colors.black
-	-- })
+
+	cPlayerList:addLabel({
+		x = 13,
+		y = 1,
+		text = 'Players',
+		foreground = colors.white
+	})
 
 	local function clearChildren(frame)
 		for _, child in ipairs(frame:getChildren()) do
@@ -121,7 +121,7 @@ function MainView.new(B, state)
 		end
 	end
 
-	state:onStateChange("players", function(_, players)
+	state:onStateChange('players', function(_, players)
 		players = players or {}
 
 		clearChildren(cPlayerList)
@@ -129,69 +129,72 @@ function MainView.new(B, state)
 		local y = 3
 		for _, data in pairs(players) do
 			local card = PlayerCard.new(cPlayerList, 2, y, data)
-			y = y + 6 -- Adjust spacing as needed
+			y = y + 6 -- spacing
 		end
 	end)
 
 	-- === CURRENTLY PLAYING LABEL ===
 	local playingLabel = B:addLabel({
 		x = 40,
-		y = realH - 3,
-		text = "[Not Playing]",
+		y = realH - 1,
+		text = '[Stopped]',
 		foreground = colors.lightGray,
-	}
-)
-	-- :setText("[Not Playing]")
-	-- :setPosition(btnX, btnY + idx * (btnH + space))
-	-- :setForeground(colors.lightGray)
+	}	)
+
+	local track = B:addLabel({
+		x = 50,
+		y = realH - 1,
+		text = 'Track:',
+		foreground = colors.black,
+	})
 
 	-- Bind label to media_current and media_playing state
-	state:onStateChange("media_current", function(_, newTrack)
-		local isPlaying = state:getState("media_playing")
+	state:onStateChange('media_current', function(_, newTrack)
+		local isPlaying = state:getState('media_playing')
 		if newTrack and isPlaying then
-			playingLabel:setText("Now Playing: " .. newTrack):setForeground(colors.lime)
+			playingLabel:setText('[Playing]')
+			track:setText('Track: ' .. newTrack):setForeground(colors.black)
+			-- playingLabel:setText('Now Playing: ' .. newTrack):setForeground(
+			-- 	colors.lime)
 		else
-			playingLabel:setText("[Not Playing]"):setForeground(colors.lightGray)
+			-- playingLabel:setText('[Not Playing]'):setForeground(colors.lightGray)
+			playingLabel:setText('[Stopped]'):setForeground(colors.lightGray)
+			track:setText('Track: '):setForeground(colors.black)
 		end
 	end)
 
-	state:onStateChange("media_playing", function(_, isPlaying)
-		local track = state:getState("media_current")
+	state:onStateChange('media_playing', function(_, isPlaying)
+		local track = state:getState('media_current')
 		if isPlaying and track then
-			playingLabel:setText("Now Playing: " .. track):setForeground(colors.lime)
+			playingLabel:setText('Now Playing: ' .. track):setForeground(colors
+				.lime)
 		else
-			playingLabel:setText("[Not Playing]"):setForeground(colors.lightGray)
+			playingLabel:setText('[Not Playing]'):setForeground(colors.lightGray)
 		end
 	end)
 
 	-- === Indicator Panel === --
+	local fIndicatorPanel = ExperimentalFrame.new(B, realW - sideW, 3,
+												  sideW - 4, realH - 4)
+	if not FEATUREFLAG_INDICATORS then
+		print('[MainView] new() - Indicators feature disabled.')
+	else
+		assert(fIndicatorPanel, '[MainView] new() - fIndicatorPanel is nil')
 
-	-- local playersList = ExperimentalFrame.new(cMain,0,0,30, realH-1)
+		local cIndicators = fIndicatorPanel:getContainer()
+		local xOff_ind = 2
+		for key, i in pairs(INDICATORS) do
+			-- function Indicator.new(app, x, y, key)
+			local ind = INDICATOR.new(cIndicators, 3, xOff_ind, key, state)
+			xOff_ind = xOff_ind + 2
 
-	-- local framePlayerList = ExperimentalFrame.new(B, 2, 3, sideW, realH - 1)
-	local fIndicatorPanel = ExperimentalFrame.new(B, realW-sideW, 3, sideW - 4, realH-4)
-	assert(fIndicatorPanel, "fIndicatorPanel is nil")
-	local cIndicators = fIndicatorPanel:getContainer()
-	local xOff_ind = 2
-	for key, i in pairs(INDICATORS) do
-		-- function Indicator.new(app, x, y, key)
-		local ind = Indicator.new(cIndicators, 3, xOff_ind, key, state)
-		xOff_ind = xOff_ind + 2
-
-		for a,b in pairs(i) do
-			print(key, "Indicator data:", a, b)
+			-- for a, b in pairs(i) do
+			-- 	print(key, 'Indicator data:', a, b)
+			-- end
 		end
+		print('[MainView] new() - Created', #INDICATORS, 'indicators.')
 	end
 
-	print("MainView: new() - Created", #INDICATORS, "indicators.")
-	print(INDICATORS)
-	--  B:addFrame({
-	-- 	x = realW - sideW,
-	-- 	y = 3,
-	-- 	width = sideW,
-	-- 	height = realH - 1,
-	--
-	-- })
 
 	return self
 end

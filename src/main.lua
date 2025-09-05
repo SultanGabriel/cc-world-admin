@@ -76,7 +76,8 @@ local function init()
 
 	else
 		B:initializeState('players', {})
-
+		B:initializeState("PDIO_Zones_Enabled", false)
+		B:initializeState("PDIO_Events_Enabled", false)
 		B:setState('PDIO', false)
 	end
 

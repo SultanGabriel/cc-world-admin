@@ -1,11 +1,11 @@
 -- ui/views/InputView
-local Component = require("ui.component")
-local BorderedFrame = require("ui.BorderedFrame")
-local ExperimentalFrame = require("ui.ExperimentalFrame")
+local Component = require('ui.component')
+local BorderedFrame = require('ui.BorderedFrame')
+local ExperimentalFrame = require('ui.ExperimentalFrame')
 
-local DOORWAYS = require("config").Doorways
+local DOORWAYS = require('config').Doorways
 
-local theme = require("theme")
+local theme = require('theme')
 
 local InputView = {}
 InputView.__index = InputView
@@ -21,7 +21,7 @@ function InputView.new(B, state)
 	local realW = 50
 	local realH = 13
 
-	print("InputView: new() - Monitor size:", monW, monH)
+	print('InputView: new() - Monitor size:', monW, monH)
 	B:setBackground(theme.backgroundColor)
 
 	local fMain = ExperimentalFrame.new(B, 1, 1, realW, realH)
@@ -37,7 +37,8 @@ function InputView.new(B, state)
 	-- === DOORWAY BUTTONS + LABELS ===
 	for key, door in pairs(DOORWAYS) do
 		local label =
-			mainContainer:addLabel():setText(door.name):setPosition(btnX + btnW + 1, btnY + idx * (btnH + space))
+			mainContainer:addLabel():setText(door.name):setPosition(
+			btnX + btnW + 1, btnY + idx * (btnH + space))
 
 		local btn = mainContainer:addButton({
 			text = door.key,
@@ -66,10 +67,10 @@ function InputView.new(B, state)
 		btn:onClick(function()
 			-- local current = state:getState(key) or false
 			-- state:setState(key, not current)
-			print("[InputView] Toggled " .. key) --.. ' to ' .. tostring(not current))
+			print('[InputView] Toggled ' .. key) --.. ' to ' .. tostring(not current))
 
 			if RedIO_Out ~= nil then
-				RedIO_Out:pulse("OUT_" .. key)
+				RedIO_Out:pulse('OUT_' .. key)
 			end
 		end)
 
@@ -83,7 +84,7 @@ function InputView.new(B, state)
 
 	mainContainer
 		:addButton({
-			text = "Open All",
+			text = 'Open All',
 			x = btnX + 35,
 			y = 1,
 			width = 10,
@@ -93,8 +94,8 @@ function InputView.new(B, state)
 		:onClick(function()
 			for key, _ in pairs(DOORWAYS) do
 				if not state:getState(key) then
-					RedIO_Out:pulse("OUT_" .. key)
-					print("[Doors] Opening:", key)
+					RedIO_Out:pulse('OUT_' .. key)
+					print('[Doors] Opening:', key)
 				end
 			end
 		end)
@@ -103,7 +104,7 @@ function InputView.new(B, state)
 
 	mainContainer
 		:addButton({
-			text = "Close All",
+			text = 'Close All',
 			x = btnX + 35,
 			y = 3,
 			width = 10,
@@ -113,15 +114,15 @@ function InputView.new(B, state)
 		:onClick(function()
 			for key, _ in pairs(DOORWAYS) do
 				if state:getState(key) then
-					RedIO_Out:pulse("OUT_" .. key)
-					print("[Doors] Closing:", key)
+					RedIO_Out:pulse('OUT_' .. key)
+					print('[Doors] Closing:', key)
 				end
 			end
 		end)
 
 	mainContainer
 		:addButton({
-			text = "LOCKDOWN",
+			text = 'LOCKDOWN',
 			x = btnX + 35,
 			y = 5,
 			width = 10,
@@ -131,33 +132,39 @@ function InputView.new(B, state)
 		:onClick(function()
 			for key, _ in pairs(DOORWAYS) do
 				if state:getState(key) then
-					RedIO_Out:pulse("OUT_" .. key)
-					print("[Doors] Lockdown - Closing:", key)
+					RedIO_Out:pulse('OUT_' .. key)
+					print('[Doors] Lockdown - Closing:', key)
 				end
 			end
 		end)
 
 	mainContainer
 		:addButton({
-			text = "Toggle ZoneCheck",
+			text = 'ZoneCheck',
 			x = 15,
 			y = 5,
 			width = 10,
 			height = 1,
 			background = colors.gray,
 		})
-		:onClick(function()
+		:onClick(function(self)
 			-- for key, _ in pairs(DOORWAYS) do
-      
-      value = state:getState()
 
-			print("[InputView] Toggled PDIO ZONES ENABLED TO " )--.. value)
-     --.. ' to ' .. tostring(not current))
-      state:setState("PDIO_Zones_Enabled", not value)
-      -- if state:getState(key) then
-      --   RedIO_Out:pulse("OUT_" .. key)
-      --   print("[Doors] Lockdown - Closing:", key)
-      -- end
+			local value = state:getState('PDIO_Zones_Enabled') 
+
+			print('[InputView] Toggled PDIO ZONES ENABLED TO ' .. tostring(not value))
+			--.. ' to ' .. tostring(not current))
+			state:setState('PDIO_Zones_Enabled', not value)
+
+			if value then
+				self:setBackground(colors.green)
+			else
+				self:setBackground(colors.red)
+			end
+			-- if state:getState(key) then
+			--   RedIO_Out:pulse("OUT_" .. key)
+			--   print("[Doors] Lockdown - Closing:", key)
+			-- end
 			-- end
 		end)
 
@@ -165,12 +172,13 @@ function InputView.new(B, state)
 	local mediaY = realH - 2
 	local mediaX = btnX
 
-	mainContainer:addLabel():setText("[ MEDIA CONTROLS ]"):setPosition(mediaX, mediaY - 1)
+	mainContainer:addLabel():setText('[ MEDIA CONTROLS ]'):setPosition(mediaX,
+		mediaY - 1)
 
 	-- Play
 	mainContainer
 		:addButton({
-			text = "Play",
+			text = 'Play',
 			x = mediaX,
 			y = mediaY,
 			width = 6,
@@ -179,17 +187,17 @@ function InputView.new(B, state)
 		})
 		:onClick(function()
 			if MPIO and MPIO.tracks[1] then
-				print("[MediaPlayer] Playing:", MPIO.tracks[1])
+				print('[MediaPlayer] Playing:', MPIO.tracks[1])
 				MPIO:play(MPIO.tracks[1])
 			else
-				print("[MediaPlayer] No track available to play.")
+				print('[MediaPlayer] No track available to play.')
 			end
 		end)
 
 	-- Pause
 	mainContainer
 		:addButton({
-			text = " Pause",
+			text = ' Pause',
 			x = mediaX + 7,
 			y = mediaY,
 			width = 7,
@@ -198,7 +206,7 @@ function InputView.new(B, state)
 		})
 		:onClick(function()
 			if MPIO then
-				print("[MediaPlayer] Pausing playback.")
+				print('[MediaPlayer] Pausing playback.')
 				MPIO:pause()
 			end
 		end)
@@ -206,7 +214,7 @@ function InputView.new(B, state)
 	-- Stop
 	mainContainer
 		:addButton({
-			text = "Stop",
+			text = 'Stop',
 			x = mediaX + 15,
 			y = mediaY,
 			width = 6,
@@ -215,7 +223,7 @@ function InputView.new(B, state)
 		})
 		:onClick(function()
 			if MPIO then
-				print("[MediaPlayer] Stopping playback.")
+				print('[MediaPlayer] Stopping playback.')
 				MPIO:stop()
 			end
 		end)
@@ -223,7 +231,7 @@ function InputView.new(B, state)
 	-- Next
 	mainContainer
 		:addButton({
-			text = "Next",
+			text = 'Next',
 			x = mediaX + 22,
 			y = mediaY,
 			width = 6,
@@ -232,10 +240,10 @@ function InputView.new(B, state)
 		})
 		:onClick(function()
 			if MPIO and #MPIO.tracks > 0 then
-				print("[MediaPlayer] Switching to next track.")
+				print('[MediaPlayer] Switching to next track.')
 				MPIO:nextTrack()
 			else
-				print("[MediaPlayer] No tracks available to switch.")
+				print('[MediaPlayer] No tracks available to switch.')
 			end
 		end)
 
@@ -249,4 +257,3 @@ end
 -- end
 
 return InputView
-
