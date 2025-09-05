@@ -31,9 +31,9 @@ function MediaPlayer.new(stateFrame, speakerPeripheral)
 end
 
 function MediaPlayer:_init()
-	self.stateFrame:initializeState("media_tracks", {})
-	self.stateFrame:initializeState("media_playing", false)
-	self.stateFrame:initializeState("media_current", nil)
+	self.stateFrame:setState("media_tracks", {})
+	self.stateFrame:setState("media_playing", false)
+	self.stateFrame:setState("media_current", nil)
 
 	self:refreshTrackList()
 end

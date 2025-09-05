@@ -1,21 +1,19 @@
-
 package.path = package.path .. ";../lib/Basalt/release/?.lua"
 package.path = package.path .. ";../src-common/?.lua"
 
+local basalt = require("basalt")
+local MainView = require("views.MainView")
+local InputView = require("views.InputView")
+local EnergyView = require("views.EnergyView")
 
-local basalt = require('basalt')
-local MainView = require('views.MainView')
-local InputView = require('views.InputView')
-local EnergyView = require('views.EnergyView')
+local DOORWAYS = require("config").Doorways
+local REDSTONE_INPUT = require("config").RedstoneInput
+local REDSTONE_OUTPUT = require("config").RedstoneOutput
+local INDICATORS = require("config").Indicators
 
-local DOORWAYS = require('config').Doorways
-local REDSTONE_INPUT = require('config').RedstoneInput
-local REDSTONE_OUTPUT = require('config').RedstoneOutput
-local INDICATORS = require('config').Indicators
-
-local RedIO = require('redio')
-local PlayerDetectorIO = require('playerdetectorio')
-local MediaPlayer = require('MediaPlayer')
+local RedIO = require("redio")
+local PlayerDetectorIO = require("playerdetectorio")
+local MediaPlayer = require("MediaPlayer")
 
 -- local selectedMonitor = nil
 local views = {}
@@ -24,76 +22,81 @@ RedIO_Out = nil
 PDIO = nil
 MPIO = nil
 
-local MONITOR_MAIN = 'monitor_17'
-local MONITOR_INPUT = 'monitor_18'
-local MONITOR_ENERGY = 'monitor_20' -- fixme rename this mdfkr some time
+local MONITOR_MAIN = "monitor_17"
+local MONITOR_INPUT = "monitor_18"
+local MONITOR_ENERGY = "monitor_20" -- fixme rename this mdfkr some time
 -- local MONITOR_STATS = "monitor_4"
 
 local function initState(state)
 	if not state then
-		error('State Object cannot be nil')
+		error("State Object cannot be nil")
 	end
 
-	-- Initialize all states 
+	-- Initialize all states
 	for key, _ in pairs(DOORWAYS) do
-		state:initializeState(key, false, false) 
+		state:initializeState(key, false, false)
 	end
-
 
 	for key, _ in pairs(REDSTONE_OUTPUT) do
-		state:initializeState(key, false, false) 
+		state:initializeState(key, false, false)
 	end
 
 	for key, _ in pairs(INDICATORS) do
-		state:initializeState(key, false, false) 
+		state:initializeState(key, false, false)
 	end
+
+	-- PDIO Thingies
+	state:initializeState("players", {})
+	state:initializeState("PDIO_Zones_Enabled", false)
+	state:initializeState("PDIO_Events_Enabled", false)
+	-- Media player Thingies
+	state:initializeState("media_tracks", {})
+	state:initializeState("media_playing", false)
+	state:initializeState("media_current", nil)
 end
 
 local function init()
 	local monitor = peripheral.wrap(MONITOR_MAIN)
 	if not monitor then
-		error('Monitor not found: ' .. MONITOR_MAIN)
+		error("Monitor not found: " .. MONITOR_MAIN)
 	end
 
 	local B = basalt.createFrame():setTerm(monitor)
 
 	initState(B)
 
-	local redstSide = 'bottom'
+	local redstSide = "bottom"
 	RedIO_In = RedIO.new(redstSide, B, REDSTONE_INPUT)
 
 	RedIO_Out = RedIO.new(redstSide, B, REDSTONE_OUTPUT)
 	-- RedIO_Out:registerOutputChangeCallback()
 
-
-	CHATBOX = peripheral.wrap('chatBox_0')
-	PD = peripheral.wrap('playerDetector_0')
+	CHATBOX = peripheral.wrap("chatBox_0")
+	PD = peripheral.wrap("playerDetector_0")
 
 	if PD ~= nil then
 		PDIO = PlayerDetectorIO.new(B, PD, CHATBOX)
-		B:setState('PDIO', true)
-		print('[MAIN] PlayerDetectorIO initialized!')
-
+		B:setState("PDIO", true)
+		print("[MAIN] PlayerDetectorIO initialized!")
 	else
-		B:initializeState('players', {})
-		B:initializeState("PDIO_Zones_Enabled", false)
-		B:initializeState("PDIO_Events_Enabled", false)
-		B:setState('PDIO', false)
+		B:setState("players", {})
+		B:setState("PDIO_Zones_Enabled", false)
+		B:setState("PDIO_Events_Enabled", false)
+
+		B:setState("PDIO", false)
 	end
 
-
-	local speaker = peripheral.wrap('speaker_8') -- or peripheral.wrap("speaker_0") if fixed
+	local speaker = peripheral.wrap("speaker_8") -- or peripheral.wrap("speaker_0") if fixed
 	if speaker then
-		print('[MAIN] Speaker found!')
-		print('[MAIN] Initiating Media Player!')
+		print("[MAIN] Speaker found!")
+		print("[MAIN] Initiating Media Player!")
 		MPIO = MediaPlayer.new(B, speaker)
 	else
-		print('[MAIN] Speaker is not connected..')
-		B:initializeState('media_tracks', {})
-		B:initializeState('media_playing', false)
-		B:initializeState('media_current', nil)
+		print("[MAIN] Speaker is not connected..")
+		B:setState('media_tracks', {})
+		B:setState('media_playing', false)
+		B:setState('media_current', nil)
 	end
-
 
 	local mainView = MainView.new(B, B)
 	table.insert(views, mainView)
@@ -101,15 +104,13 @@ local function init()
 	--- Other views
 	local monitorInput = peripheral.wrap(MONITOR_INPUT)
 	if monitorInput then
-		local inputView = InputView.new(
-			basalt.createFrame():setTerm(monitorInput), B)
+		local inputView = InputView.new(basalt.createFrame():setTerm(monitorInput), B)
 		table.insert(views, inputView)
 	end
 
 	local monitorEnergy = peripheral.wrap(MONITOR_ENERGY)
 	if monitorEnergy then
-		local energyView = EnergyView.new(
-			basalt.createFrame():setTerm(monitorEnergy), B)
+		local energyView = EnergyView.new(basalt.createFrame():setTerm(monitorEnergy), B)
 		table.insert(views, energyView)
 	end
 end
@@ -142,3 +143,4 @@ end)
 basalt.run()
 -- 	end
 -- )
+
