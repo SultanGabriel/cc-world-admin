@@ -14,12 +14,10 @@ local COLORS = {
 }
 
 local LEVELS = {
-    TRACE = 0,
     DEBUG = 1,
     INFO  = 2,
     WARN  = 3,
     ERROR = 4,
-    FATAL = 5,
 }
 
 local DEFAULT_LEVEL = LEVELS.INFO
@@ -29,6 +27,11 @@ local instance = nil -- Singleton instance
 function Logger.getInstance(tag, level, logFile)
     if not instance then
         instance = Logger.new(tag or 'App', level or 'INFO', logFile)
+    elseif instance then
+        if tag then instance.tag = tag end
+        if level or logFile then 
+            print('[Logger] Warning: Logger instance already created; ignoring new level or logFile parameters')
+        end
     end
     return instance
 end
@@ -60,9 +63,10 @@ function Logger:_write(level, message)
 
     local time = os.date('%H:%M:%S')
     local label = string.format('[%s] [%s] [%s]', time, self.tag, level)
-    local color = COLORS[level] or ''
-    local reset = COLORS.RESET
-    local formatted = string.format('%s%s %s%s', color, label, message, reset)
+    -- local color = COLORS[level] or ''
+    -- local reset = COLORS.RESET
+    -- local formatted = string.format('%s%s %s%s', color, label, message, reset)
+    local formatted = string.format('%s %s', label, message )
 
     print(formatted)
 
@@ -81,6 +85,11 @@ for name, _ in pairs(LEVELS) do
         self:_write(name, msg)
     end
 end
+-- for name, _ in pairs(LEVELS) do
+--     Logger[string.lower(name)] = function(self, tag, msg)
+--         self:_write(name, string.format('[%s] %s', tag, msg))
+--     end
+-- end
 
 return Logger
 

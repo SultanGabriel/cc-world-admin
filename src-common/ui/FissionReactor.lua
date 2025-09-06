@@ -26,7 +26,7 @@ SYMBOLS = {
 function FissionReactor.new(app, x, y, state)
 	local self = setmetatable(Component.new(), FissionReactor)
 
-    self.ANIMATE = true
+    self.ANIMATE = false
 
     self.width = 46
     self.height = 24

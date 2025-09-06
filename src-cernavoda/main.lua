@@ -6,6 +6,9 @@ local basalt = require('basalt')
 local MainView = require('views.MainView')
 local DevView = require('views.DevView')
 
+-- Logger Setup
+local L = require('logger').getInstance('Main', 'DEBUG', '/log.txt')
+
 
 -- local RedIO = require('redio')
 
@@ -16,16 +19,21 @@ local MONITOR_DEV = 'monitor_22'
 
 local function initState(state)
 	if not state then
-		error('State Object cannot be nil')
+		L:error('State Object cannot be nil')
+		return
 	end
 
     -- Initialize all states
+	local stateCount = 0
+
+	
+	L:info('State initialized with ' .. stateCount .. ' entries')
 end
 
 local function init()
 	local monitor = peripheral.wrap(MONITOR_MAIN)
 	if not monitor then
-		error('Monitor not found: ' .. MONITOR_MAIN)
+		L:error('Monitor not found: ' .. MONITOR_MAIN)
 	end
 
 	local B = basalt.createFrame():setTerm(monitor)
@@ -47,9 +55,12 @@ local function init()
 		local devView = DevView.new(basalt.createFrame():setTerm(devMonitor), B)
 		table.insert(views, devView)
   else 
-    print("[MAIN] dev Monitor not found!")
+    -- print("[MAIN] dev Monitor not found!")
+	L:error('dev Monitor not found: ' .. MONITOR_DEV)
 	end
 
+	 
+	L:info('Initialization complete with ' .. #views .. ' views')
   return true
 end
 

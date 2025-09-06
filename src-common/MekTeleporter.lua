@@ -1,0 +1,29 @@
+-- Teleporter
+
+-- Method Name	Params	Returns	Description
+-- createFrequency	
+-- name
+-- String
+-- Requires frequency to not already exist and for it to be public so that it can make it as the player who owns the block. Also sets the frequency after creation
+-- Requires public security
+-- decrementFrequencyColor			Requires a frequency to be selected
+-- Requires public security
+-- getActiveTeleporters		List (Table (Coord4D))	Requires a frequency to be selected
+-- getEnergyItem		Table (ItemStack)	Get the contents of the energy slot.
+-- getFrequencies		List (Table (TeleporterFrequency))	Lists public frequencies
+-- getFrequency		Table (TeleporterFrequency)	Requires a frequency to be selected
+-- getFrequencyColor		String (EnumColor)	Requires a frequency to be selected
+-- getStatus		String	
+-- hasFrequency		boolean	
+-- incrementFrequencyColor			Requires a frequency to be selected
+-- Requires public security
+-- setFrequency	
+-- name
+-- String
+-- Requires a public frequency to exist
+-- Requires public security
+-- setFrequencyColor	
+-- color
+-- String (EnumColor)
+-- Requires a frequency to be selected
+-- Requires public security

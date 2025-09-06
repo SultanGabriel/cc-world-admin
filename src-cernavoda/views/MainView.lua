@@ -12,18 +12,33 @@ local MainView = {}
 MainView.__index = MainView
 setmetatable(MainView, { __index = Component })
 
+local L = require('logger').getInstance('View Main', 'DEBUG')
+
 function MainView.new(B, state)
 	local self = setmetatable(Component.new(), MainView)
+	
+	assert(B, 'Basalt frame cannot be nil')
+	assert(state, 'State object cannot be nil')
 
 	self.components = {}
-	self.state = state or {}
+	self.state = state 
+	self.B = B
+	self.width = 114
+	self.height = 33
 
 	local monW, monH = B:getSize()
-	print('MainView: new() - Monitor size:', monW, monH)
 
-	local realW = 114
-	local realH = 33
+	L:info('MainView: new() - Monitor size: ' .. monW .. 'x' .. monH)
 
+	self:draw()
+
+	return self
+end
+
+function MainView:draw()
+	L:info('MainView: draw() - Drawing main view components')
+	
+	local B = self.B
 	B:setBackground(theme.backgroundColor)
 
 	-- === Header ===
@@ -31,24 +46,24 @@ function MainView.new(B, state)
 	local fHeader = B:addFrame({
 		x = 1,
 		y = 1,
-		width = realW,
+		width = self.width,
 		height = headerH,
 		background = theme.headerBackgroundColor,
 	})
 
 	fHeader:addLabel({
-		x = realW / 2 - 20,
+		x = self.width / 2 - 20,
 		y = 1,
 		text = 'Cernavoda Nuclear Fission Powerplant',
 		foreground = colors.white,
 	})
 
-	local clock = Clock.new(fHeader, realW - 10, 1)
+	local clock = Clock.new(fHeader, self.width - 10, 1)
 	table.insert(self.components, clock)
 
 	-- === Main ===
 
-	local FMain = ExperimentalFrame.new(B, 1, headerH + 1, realW, realH - headerH - 1)
+	local FMain = ExperimentalFrame.new(B, 1, headerH + 1, self.width, self.height - headerH - 1)
 	local fMain = FMain:getContainer()
 
 
@@ -58,7 +73,7 @@ function MainView.new(B, state)
 	R_VIEW_WIDTH = 32
 
 	R_VIEWS_XOFFSET = 4
-  R_VIEWS_YOFFSET = 4
+	R_VIEWS_YOFFSET = 4
 
 	local fR1 = fMain:addFrame({
 		x = R_VIEWS_XOFFSET,
@@ -88,9 +103,13 @@ function MainView.new(B, state)
   -- Fission reactor element
 	local R1 = FissionReactor.new(fR1, 2, 2, self.state)
 	table.insert(self.components, R1)
-	
 
-	return self
+	local R2 = FissionReactor.new(fR2, 2, 2, self.state)
+	table.insert(self.components, R2)
+
+	local R3 = FissionReactor.new(fR3, 2, 2, self.state)
+	table.insert(self.components, R3)
+
 end
 
 function MainView:update()
