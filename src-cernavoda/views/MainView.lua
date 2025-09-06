@@ -69,11 +69,11 @@ function MainView:draw()
 
 	-- === Footer ===
 
-	R_VIEW_HEIGHT = 22
-	R_VIEW_WIDTH = 32
+	R_VIEW_HEIGHT = 26
+	R_VIEW_WIDTH = 34
 
 	R_VIEWS_XOFFSET = 4
-	R_VIEWS_YOFFSET = 4
+	R_VIEWS_YOFFSET = 2
 
 	local fR1 = fMain:addFrame({
 		x = R_VIEWS_XOFFSET,
@@ -101,13 +101,13 @@ function MainView:draw()
 	})
 
   -- Fission reactor element
-	local R1 = FissionReactor.new(fR1, 2, 2, self.state)
+	local R1 = FissionReactor.new(fR1, self.state, 1, 1, "R01")
 	table.insert(self.components, R1)
 
-	local R2 = FissionReactor.new(fR2, 2, 2, self.state)
+	local R2 = FissionReactor.new(fR2, self.state, 1, 1, "R02")
 	table.insert(self.components, R2)
 
-	local R3 = FissionReactor.new(fR3, 2, 2, self.state)
+	local R3 = FissionReactor.new(fR3, self.state, 1, 1, "R03")
 	table.insert(self.components, R3)
 
 end

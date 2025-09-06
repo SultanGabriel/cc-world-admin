@@ -9,15 +9,22 @@ setmetatable(ExperimentalFrame, { __index = Component })
 function ExperimentalFrame.new(app, x, y, w, h, bgColor, bColor)
 	local self = setmetatable(Component.new(), ExperimentalFrame)
 
-	self.borderColor = theme.borderColor or bColor or colors.black
-	self.backgroundColor = theme.backgroundColor or bgColor or colors.lightGray
+	self.borderColor = bColor or theme.borderColor or colors.black
+	self.backgroundColor = bgColor or theme.backgroundColor or colors.lightGray
 	self.x = x
 	self.y = y
 	self.w = w
 	self.h = h
 
 	-- Base container
-	self.container = app:addFrame():setPosition(x, y):setSize(w, h):setBackground(self.backgroundColor)
+	self.container = app:addFrame({
+		x = x,
+		y = y,
+		width = w,
+		height = h,
+		background = theme.backgroundColor --self.backgroundColor,
+	})
+	--:setPosition(x, y):setSize(w, h):setBackground(self.backgroundColor)
 
 	self:_draw()
 
@@ -56,24 +63,26 @@ function ExperimentalFrame:_draw()
 
 	self.container:addLabel({
 		x = 1,
-		y = self.h - 1,
+		y = self.h,
 		text = borderBot,
 		foreground = self.borderColor
 	})
 
-	for i = 1, self.h - 3 do
+	for i = 1, self.h - 2 do
 		self.container:addLabel({
 			x = 1,
 			y = i + 1,
 			text = CHAR_BAR_V,
-			foreground = self.borderColor
+			foreground = self.borderColor,
+			background = theme.backgroundColor
 		})
 
 		self.container:addLabel({
 			x = self.w,
 			y = 1 + i,
 			text = CHAR_BAR_V,
-			foreground = self.borderColor
+			foreground = self.borderColor,
+			background = theme.backgroundColor
 		})
 	end
 
@@ -101,7 +110,14 @@ function ExperimentalFrame:_draw()
 	-- 	:setBackground(self.borderColor)
 	--
 	-- -- Content area
-	self.inner = self.container:addFrame():setPosition(2, 2):setSize(self.w - 2, self.h - 3):setBackground(theme.backgroundColor)
+	self.inner = self.container:addFrame({
+		x = 2,
+		y = 2,
+		width = self.w - 2,
+		height = self.h - 2,
+		background = self.backgroundColor,
+	})
+--	:setPosition(2, 2):setSize(self.w - 2, self.h - 3):setBackground(self.backgroundColor)
 	-- :setBackground(self.backgroundColor)
 	return self
 end

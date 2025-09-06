@@ -101,6 +101,135 @@ function MekFissionReactor:getDamagePercent()
 end
 
 
+-- Get the contents of the fuel tank
+function MekFissionReactor:getFuel()
+    if self.peripheral == DEV_BYPASS_STRING then
+        return {amount = 10000, name = "mock_fuel"} -- Mock value
+    end
+    local status, result = pcall(function() return self.peripheral.getFuel() end)
+    if status and result then
+        return result
+    else
+        L:error('getFuel failed: ' .. tostring(result))
+        return nil
+    end
+end
+
+-- Get the capacity of the fuel tank
+function MekFissionReactor:getFuelCapacity()
+    if self.peripheral == DEV_BYPASS_STRING then
+        return 50000 -- Mock value
+    end
+    local status, result = pcall(function() return self.peripheral.getFuelCapacity() end)
+    if status and result then
+        return result
+    else
+        L:error('getFuelCapacity failed: ' .. tostring(result))
+        return nil
+    end
+end
+
+-- Get the maximum burn rate
+function MekFissionReactor:getMaxBurnRate()
+    if self.peripheral == DEV_BYPASS_STRING then
+        return 99999 -- Mock value
+    end
+    local status, result = pcall(function() return self.peripheral.getMaxBurnRate() end)
+    if status and result then
+        return result
+    else
+        L:error('getMaxBurnRate failed: ' .. tostring(result))
+        return nil
+    end
+end
+
+-- Get the heating rate
+function MekFissionReactor:getHeatingRate()
+    if self.peripheral == DEV_BYPASS_STRING then
+        return 1234 -- Mock value
+    end
+    local status, result = pcall(function() return self.peripheral.getHeatingRate() end)
+    if status and result then
+        return result
+    else
+        L:error('getHeatingRate failed: ' .. tostring(result))
+        return nil
+    end
+end
+
+-- Get the status (true = active, false = off)
+function MekFissionReactor:getStatus()
+    if self.peripheral == DEV_BYPASS_STRING then
+        return true -- Mock value
+    end
+    local status, result = pcall(function() return self.peripheral.getStatus() end)
+    if status and result then
+        return result
+    else
+        L:error('getStatus failed: ' .. tostring(result))
+        return nil
+    end
+end
+
+-- Scram the reactor (emergency shutdown)
+function MekFissionReactor:scram()
+    if self.peripheral == DEV_BYPASS_STRING then
+        L:warn('scram called in DEV_MODE (mock)')
+        return true
+    end
+    local status, result = pcall(function() return self.peripheral.scram() end)
+    if status then
+        return result
+    else
+        L:error('scram failed: ' .. tostring(result))
+        return nil
+    end
+end
+
+-- Get the temperature of the reactor in Kelvin
+function MekFissionReactor:getTemperature()
+    if self.peripheral == DEV_BYPASS_STRING then
+        return 350.0 -- Mock value
+    end
+    local status, result = pcall(function() return self.peripheral.getTemperature() end)
+    if status and result then
+        return result
+    else
+        L:error('getTemperature failed: ' .. tostring(result))
+        return nil
+    end
+end
+
+-- Get the number of fuel assemblies (if available)
+function MekFissionReactor:getFuelAssemblies()
+    if self.peripheral == DEV_BYPASS_STRING then
+        return 42 -- Mock value
+    end
+    local status, result = pcall(function() return self.peripheral.getFuelAssemblies and self.peripheral.getFuelAssemblies() or nil end)
+    if status and result then
+        return result
+    else
+        L:error('getFuelAssemblies failed: ' .. tostring(result))
+        return nil
+    end
+end
+
+-- Set the burn rate
+function MekFissionReactor:setBurnRate(rate)
+    if self.peripheral == DEV_BYPASS_STRING then
+        L:info('setBurnRate(' .. tostring(rate) .. ') called in DEV_MODE (mock)')
+        return true
+    end
+    local status, result = pcall(function() return self.peripheral.setBurnRate(rate) end)
+    if status then
+        return result
+    else
+        L:error('setBurnRate failed: ' .. tostring(result))
+        return nil
+    end
+end
+
+
 
 return MekFissionReactor
 
