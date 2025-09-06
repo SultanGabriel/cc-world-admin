@@ -4,13 +4,15 @@ package.path = package.path .. ";../src-common/?.lua"
 
 local basalt = require('basalt')
 local MainView = require('views.MainView')
+local DevView = require('views.DevView')
 
 
 -- local RedIO = require('redio')
 
 local views = {}
 
-local MONITOR_MAIN = 'monitor_1'
+local MONITOR_MAIN = 'monitor_21'
+local MONITOR_DEV = 'monitor_22'
 
 local function initState(state)
 	if not state then
@@ -39,7 +41,16 @@ local function init()
 	local mainView = MainView.new(B, B)
 	table.insert(views, mainView)
 
-    return true
+  -- DevView
+  local devMonitor = peripheral.wrap(MONITOR_DEV)
+	if devMonitor then
+		local devView = DevView.new(basalt.createFrame():setTerm(devMonitor), B)
+		table.insert(views, devView)
+  else 
+    print("[MAIN] dev Monitor not found!")
+	end
+
+  return true
 end
 
 init()

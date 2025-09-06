@@ -120,7 +120,7 @@ end
 
 function FissionReactor:update()
     if self.ANIMATE then
-        print("FissionReactor: update() - Animating core")
+        -- print("FissionReactor: update() - Animating core")
 
         local RND_1_PASS = 0.3
         local RND_2_PASS = 0.1

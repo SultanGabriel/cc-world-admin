@@ -12,9 +12,6 @@ local MainView = {}
 MainView.__index = MainView
 setmetatable(MainView, { __index = Component })
 
--- FIXME
-FEATUREFLAG_INDICATORS = false
-
 function MainView.new(B, state)
 	local self = setmetatable(Component.new(), MainView)
 
@@ -24,7 +21,7 @@ function MainView.new(B, state)
 	local monW, monH = B:getSize()
 	print('MainView: new() - Monitor size:', monW, monH)
 
-	local realW = 157
+	local realW = 114
 	local realH = 33
 
 	B:setBackground(theme.backgroundColor)
@@ -42,7 +39,7 @@ function MainView.new(B, state)
 	fHeader:addLabel({
 		x = realW / 2 - 20,
 		y = 1,
-		text = 'GregTech Factory Central Monitoring System',
+		text = 'Cernavoda Nuclear Fission Powerplant',
 		foreground = colors.white,
 	})
 
@@ -57,14 +54,15 @@ function MainView.new(B, state)
 
 	-- === Footer ===
 
-	R_VIEW_HEIGHT = 26
-	R_VIEW_WIDTH = 48
+	R_VIEW_HEIGHT = 22
+	R_VIEW_WIDTH = 32
 
 	R_VIEWS_XOFFSET = 4
+  R_VIEWS_YOFFSET = 4
 
 	local fR1 = fMain:addFrame({
 		x = R_VIEWS_XOFFSET,
-		y = 2,
+		y = R_VIEWS_YOFFSET,
 		width = R_VIEW_WIDTH,
 		height = R_VIEW_HEIGHT,
 		background = theme.panelBackgroundColor,
@@ -73,7 +71,7 @@ function MainView.new(B, state)
 
 	local fR2 = fMain:addFrame({
 		x = R_VIEWS_XOFFSET + R_VIEW_WIDTH + 2,
-		y = 2,
+		y = R_VIEWS_YOFFSET,
 		width = R_VIEW_WIDTH,
 		height = R_VIEW_HEIGHT,
 		background = theme.panelBackgroundColor,
@@ -81,12 +79,13 @@ function MainView.new(B, state)
 
 	local fR3 = fMain:addFrame({
 		x = R_VIEWS_XOFFSET + R_VIEW_WIDTH * 2 + 4,
-		y = 2,
+		y = R_VIEWS_YOFFSET,
 		width = R_VIEW_WIDTH,
 		height = R_VIEW_HEIGHT,
 		background = theme.panelBackgroundColor,
 	})
 
+  -- Fission reactor element
 	local R1 = FissionReactor.new(fR1, 2, 2, self.state)
 	table.insert(self.components, R1)
 	
