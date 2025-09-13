@@ -12,7 +12,14 @@ GTMO:
 
 CNVD:
 ./CraftOS-PC_console.exe --id 1 --label "Cernavoda" --directory ./computers/ --mount /src=./dev/ --script ./scripts/Cernavoda.lua
+
+NTWK:
+./CraftOS-PC_console.exe --id 3 --label "Networking" --directory ./computers/ --mount /src=./dev/ --script ./scripts/Networking.lua
 ```
+
+peripheral.find("modem", rednet.open); rednet.host("demo","A"); print("waiting…"); local s,m=rednet.receive("demo"); print(("from %d: %s"):format(s,tostring(m)))
+
+peripheral.find("modem", rednet.open); local id=rednet.lookup("demo","A"); assert(id,"no host"); rednet.send(id,"hello from B","demo")
 
 
 
@@ -27,6 +34,8 @@ CNVD:
  - [NODE] Watersheep Lore
    - Say stuff in chat
    - Print chores
+
+ - #gtmo Think about changing  
 
 #### Branches
  - 'main': main branch
