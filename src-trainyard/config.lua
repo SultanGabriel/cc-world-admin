@@ -66,4 +66,19 @@ local config = {
         },
 }
 
+-- Derive RedstoneOutput mapping like the main project: logical keys -> bundled outputs
+-- Keys match state names used by logic (stop_slot1..stop_slot6)
+config.RedstoneOutput = {}
+for i = 1, 6 do
+        local slot = config.SLOTS[i]
+        if slot and slot.link_color and colors and colors[slot.link_color] then
+                local key = ("stop_slot%d"):format(i)
+                config.RedstoneOutput[key] = {
+                        side = config.REDSTONE_SIDE,
+                        mode = 'output',
+                        bundled = colors[slot.link_color],
+                }
+        end
+end
+
 return config

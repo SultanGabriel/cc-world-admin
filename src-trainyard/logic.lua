@@ -3,7 +3,7 @@ local RedIO = require("redio")
 
 local M = { conf = nil, B = nil, redio = nil }
 
-local C = _G.colors or require("colors")
+local C = _G.colors 
 
 -- Internal cache: map slot index -> yard station peripheral
 local stationBySlot = {}   -- [i] = peripheral
@@ -74,16 +74,22 @@ local function initStates(conf, B)
 end
 
 local function initRedIO(conf, B)
-  local outputs = {}
-  for i = 1, 6 do
-    local slot = conf.SLOTS[i]
-    if slot and slot.link_color and C[slot.link_color] then
-      local key = ("stop_slot%d"):format(i)
-      local mask = C[slot.link_color]
-      print(('[redio] bind %s -> side=%s color=%s(%d)')
-        :format(key, tostring(conf.REDSTONE_SIDE), slot.link_color, mask))
-      outputs[key] = { side = conf.REDSTONE_SIDE, mode = "output", bundled = mask }
+  -- Prefer explicit mapping from config if provided (parity with main project)
+  local outputs = conf.RedstoneOutput or {}
+  if not outputs or next(outputs) == nil then -- i  am pretty positive this is not needed
+    outputs = {}
+    for i = 1, 6 do
+      local slot = conf.SLOTS[i]
+      if slot and slot.link_color and C[slot.link_color] then
+        local key = ("stop_slot%d"):format(i)
+        local mask = C[slot.link_color]
+        outputs[key] = { side = conf.REDSTONE_SIDE, mode = "output", bundled = mask }
+      end
     end
+  end
+  for name, cfg in pairs(outputs) do
+    print(('[redio] bind %s -> side=%s bundled=%s')
+      :format(name, tostring(cfg.side), tostring(cfg.bundled)))
   end
   if type(rawget(_G, "redstone")) ~= "table" then
     -- Sandbox: no redstone peripheral available -- fixme this works in sandbox
