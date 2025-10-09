@@ -110,10 +110,10 @@ local function buildRouteEntries(B, slotIdx, yardName)
   for _ = 1, loops do
     for _, leg in ipairs(route) do
       local wait = tonumber(leg.wait or 1)
-      table.insert(entries, { dest = leg.name, waitSeconds = wait, throttle = throttle })
+      table.insert(entries, { dest = leg.name, waitSeconds = wait, throttle = throttle, yard = false })
     end
   end
-  table.insert(entries, { dest = yardName, waitSeconds = math.max(0, tonumber(sc.yard_wait or 0)), throttle = throttle })
+  table.insert(entries, { dest = yardName, waitSeconds = math.max(0, tonumber(sc.yard_wait or 0)), throttle = throttle, yard = true })
   return entries
 end
 
@@ -193,11 +193,12 @@ function M.tick()
         if obj.mismatch then
           obj.status = "awaiting update (mismatch)"
         else
-          local yardName = st and st.getStationName and st.getStationName() or (slotConf.name or ("Slot " .. i))
+          local yardName = st and st.getStationName and st.getStationName() or (slotConf.name or ("Trainyard #" .. i))
           local entries = buildRouteEntries(B, i, yardName)
           local okPush, err
           if st then
-            okPush, err = adapter.applySchedule(entries, slotConf.name, st)
+            local concreteColor = slotConf.link_color or "red" -- default safety
+            okPush, err = adapter.applySchedule(entries, (slotConf.name or ("Trainyard #" .. i)), st, concreteColor)
           else
             -- DEV: pretend schedule was applied successfully
             okPush, err = true, nil

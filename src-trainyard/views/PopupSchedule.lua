@@ -55,12 +55,12 @@ local function makeRouteSelector(parent, x, y, currentRouteId)
     width = 48, height = 1, background = C.gray })
   frame:addLabel({ x = 1,
    y = 1,
-    text = "Route:", foreground = C.black })
+   text = "Route:", foreground = C.black })
   local prev = frame:addButton({ x = 22,
    y = 1,
     width = 3, height = 1, text = "<", background = C.black, foreground = C.white })
   local lbl  = frame:addLabel({ x = 26,
-   y = 1,
+  y = 1,
     text = keys[idx] or "-", foreground = C.black })
   local next = frame:addButton({ x = 34,
    y = 1,

@@ -23,24 +23,47 @@ local function findStationsByName()
   return map
 end
 
--- Build a Create schedule in the instruction/conditions format per requested spec
--- entries: { { dest="Station", waitSeconds=5, throttle=80 }, ... }
-local function buildCreateSchedule(entries, title)
+-- Build a Create schedule per required pattern:
+--  throttle -> destination(+delay) repeated, and on the final yard destination add redstone link condition
+-- entries: { { dest="Station", waitSeconds=5, throttle=80, yard=false }, ..., { dest=yardName, waitSeconds=20, throttle=80, yard=true } }
+local function buildCreateSchedule(entries, title, concreteColor)
   local sched = { cyclic = true, entries = {}, title = title or "Trainyard" }
+  local color = (concreteColor or "white"):lower()
+  local concreteId = ("minecraft:%s_concrete"):format(color)
+
   for _, e in ipairs(entries) do
-    table.insert(sched.entries, {
-      instruction = { id = "create:destination", data = { text = e.dest } },
-      conditions = {
-        { { id = "create:delay", data = { value = math.floor((e.waitSeconds or 0)), time_unit = 1 } } },
-      },
-    })
+    -- throttle BEFORE destination
     if e.throttle and e.throttle > 0 then
       table.insert(sched.entries, {
-        instruction = { id = "create:throttle", data = { value = e.throttle } },
-        conditions = { { { id = "create:delay", data = { value = 0, time_unit = 1 } } } },
+        instruction = { id = "create:throttle", data = { value = math.floor(e.throttle) } },
       })
     end
+
+    local delayCond = { id = "create:delay", data = { value = math.floor(e.waitSeconds or 0), time_unit = 1 } }
+    local condRow = nil
+    if e.yard then
+      -- Add redstone link with red conductor cap + slot-specific concrete color
+      local linkCond = {
+        id = "create:redstone_link",
+        data = {
+          frequency = {
+            { count = 1, id = "railways:red_conductor_cap" },
+            { count = 1, id = concreteId },
+          },
+          inverted = 0,
+        },
+      }
+      condRow = { delayCond, linkCond }
+    else
+      condRow = { delayCond }
+    end
+
+    table.insert(sched.entries, {
+      instruction = { id = "create:destination", data = { text = e.dest } },
+      conditions = { condRow },
+    })
   end
+
   return sched
 end
 
@@ -58,8 +81,8 @@ end
 
 -- High-level entrypoint used by logic: build a schedule and apply to yard station
 -- routeEntries: ordered list of destinations + waits; yardName appended by logic
-function A.applySchedule(routeEntries, title, yardStation)
-  local sched = buildCreateSchedule(routeEntries, title)
+function A.applySchedule(routeEntries, title, yardStation, concreteColor)
+  local sched = buildCreateSchedule(routeEntries, title, concreteColor)
   return A.applyScheduleToStation(yardStation, sched)
 end
 
