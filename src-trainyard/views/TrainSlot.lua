@@ -42,14 +42,18 @@ function TrainSlot.new(parent, idx, state)
 
   local slots = state:getState("slots") or {}
   local slot = slots[idx] or {}
-  local obj = state:getState(("SLOT_%d"):format(idx)) or {}
+  local slotKey = ("SLOT_%d"):format(idx)
+  local obj = state:getState(slotKey) or {}
   local enabled = obj.enabled == true
 
   -- Title row
   local nameTxt = obj.name or slot.name or ("Slot " .. idx)
   local typeTxt = "[" .. (obj.type or slot.type or (enabled and "?" or "inactive")) .. "]"
   local nameLbl = self.box:addLabel({ x = LAYOUT.innerPadX, y = 1, text = nameTxt, foreground = enabled and theme.text or theme.dim })
-  self.box:addLabel({ x = LAYOUT.innerPadX + #nameTxt + 2, y = 1, text = typeTxt, foreground = theme.dim })
+  local typeX = LAYOUT.innerPadX + #nameTxt + 2
+  local typeLbl = self.box:addLabel({ x = typeX, y = 1, text = typeTxt, foreground = theme.dim })
+  -- Current train name shown after [type]
+  self.trainNameLbl = self.box:addLabel({ x = typeX + #typeTxt + 2, y = 1, text = "", foreground = theme.text })
 
   -- Compute dynamic placements based on container width
   local cw, _ = self.box:getSize()
@@ -83,9 +87,9 @@ function TrainSlot.new(parent, idx, state)
         local Popup = require("views.PopupSchedule")
         Popup.open(parent, idx, state, function(newCfg) logic.updateSlotConfig(idx, newCfg) end)
       end)
-    self.btnRelease = self.box:addButton({ x = startX + btnEditW + LAYOUT.buttonGap, y = 3, width = btnReleaseW, height = 1, text = "Release", background = C.lime, foreground = C.black })
+    self.btnRelease = self.box:addButton({ x = startX + btnEditW + LAYOUT.buttonGap, y = 3, width = btnReleaseW, height = 1, text = "RUN", background = C.lime, foreground = C.black })
       :onClick(function() logic.releaseTrain(idx) end)
-    self.btnHold = self.box:addButton({ x = startX + btnEditW + LAYOUT.buttonGap + btnReleaseW + LAYOUT.buttonGap, y = 3, width = btnHoldW, height = 1, text = "Hold", background = C.red, foreground = C.white })
+    self.btnHold = self.box:addButton({ x = startX + btnEditW + LAYOUT.buttonGap + btnReleaseW + LAYOUT.buttonGap, y = 3, width = btnHoldW, height = 1, text = "STOP", background = C.red, foreground = C.white })
       :onClick(function() logic.holdTrain(idx) end)
   else
     -- Inactive card hint
@@ -93,7 +97,14 @@ function TrainSlot.new(parent, idx, state)
   end
 
   self.enabled = enabled
-  self:update()
+
+  -- Reactive: update UI when SLOT state changes
+  state:onStateChange(slotKey, function(_, newObj)
+    self:_applyState(newObj or {})
+  end)
+
+  -- Initial paint
+  self:_applyState(obj)
   return self
 end
 
@@ -101,34 +112,27 @@ local function cfgSummary(sc)
   return ("v=%.2f L=%d Y=%ds"):format(sc.speed or 1.0, sc.loops_before_yard or 1, sc.yard_wait or 0)
 end
 
-function TrainSlot:update()
-  local s = self.state
-  local obj = s:getState(("SLOT_%d"):format(self.idx)) or {}
+function TrainSlot:_applyState(obj)
   self.enabled = obj.enabled == true
-  if not self.enabled then
-    -- Keep inactive visuals static
-    self.statusLbl:setText("inactive")
-    self.statusLbl:setForeground(theme.dim)
-    self.presenceLbl:setText("(inactive)")
-    self.presenceLbl:setForeground(theme.dim)
-    self.mismatchLbl:setText("")
-    self.schedLbl:setText("-")
-    return
-  end
+  local slots = self.state:getState("slots") or {}
+  local confSlot = slots[self.idx] or {}
 
-  local status = obj.status or "idle"
+  -- Status
+  local status = obj.status or (self.enabled and "idle" or "inactive")
   self.statusLbl:setText(status)
   local fg = theme.warn
   if status == "idle" or status == "running" then fg = theme.ok end
   if status == "push failed" then fg = theme.err end
+  if not self.enabled then fg = theme.dim end
   self.statusLbl:setForeground(fg)
 
+  -- Presence and mismatch
   local present = obj.present or false
   local mismatch = obj.mismatch or false
   local trainName = obj.trainName
   if present then
     self.presenceLbl:setText("(present)")
-    self.presenceLbl:setForeground(theme.ok)
+    self.presenceLbl:setForeground(self.enabled and theme.ok or theme.dim)
   else
     self.presenceLbl:setText("(no train)")
     self.presenceLbl:setForeground(theme.dim)
@@ -139,8 +143,25 @@ function TrainSlot:update()
     self.mismatchLbl:setText("")
   end
 
+  -- Train name after [type]
+  if trainName and trainName ~= "" then
+    self.trainNameLbl:setText(" - " .. tostring(trainName))
+    self.trainNameLbl:setForeground(self.enabled and theme.text or theme.dim)
+  else
+    self.trainNameLbl:setText("")
+  end
+
+  -- Config summary and route
   local sc = obj.sched or {}
   self.schedLbl:setText(cfgSummary(sc))
+  local routeId = obj.routeId or confSlot.routeId or "-"
+  self.routeLbl:setText(routeId)
+end
+
+-- Back-compat: allow MainView to call update(); delegate to reactive painter
+function TrainSlot:update()
+  local obj = self.state:getState(("SLOT_%d"):format(self.idx)) or {}
+  self:_applyState(obj)
 end
 
 return TrainSlot

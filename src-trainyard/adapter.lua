@@ -4,6 +4,10 @@
 -- - Train Station:  https://wiki.createmod.net/users/cc-tweaked-integration/train/train-station
 
 local A = {}
+local DEBUG_ADAPTER = true
+local function dbg(...)
+  if DEBUG_ADAPTER then print('[adapter]', ...) end
+end
 
 -- Discover all Create Train Stations and index by station name
 local function findStationsByName()
@@ -32,6 +36,7 @@ local function buildCreateSchedule(entries, title, concreteColor)
   local concreteId = ("minecraft:%s_concrete"):format(color)
 
   for _, e in ipairs(entries) do
+    dbg('entry', e.dest, 'wait', tostring(e.waitSeconds), 'thr', tostring(e.throttle), e.yard and '(yard)' or '')
     -- throttle BEFORE destination
     if e.throttle and e.throttle > 0 then
       table.insert(sched.entries, {
@@ -53,6 +58,7 @@ local function buildCreateSchedule(entries, title, concreteColor)
           inverted = 0,
         },
       }
+      dbg('yard conditions: delay', delayCond.data.value, 'link', linkCond.data.frequency[2].id)
       condRow = { delayCond, linkCond }
     else
       condRow = { delayCond }
@@ -71,18 +77,26 @@ end
 -- yardStation is the Create train-station peripheral for the yard slot.
 function A.applyScheduleToStation(yardStation, schedule)
   if not yardStation then return false, "No station peripheral" end
+  local name = 'unknown'
+  local okN, n = pcall(yardStation.getStationName)
+  if okN and n then name = n end
+  dbg('applyScheduleToStation ->', name, 'entries', #schedule.entries, 'cyclic', tostring(schedule.cyclic))
   -- Station is the only place we can call setSchedule per docs (for present train)
   local ok, err = pcall(yardStation.setSchedule, schedule)
   if not ok then
+    dbg('setSchedule failed:', tostring(err))
     return false, ("setSchedule failed: %s"):format(tostring(err))
   end
+  dbg('setSchedule OK')
   return true
 end
 
 -- High-level entrypoint used by logic: build a schedule and apply to yard station
 -- routeEntries: ordered list of destinations + waits; yardName appended by logic
 function A.applySchedule(routeEntries, title, yardStation, concreteColor)
+  dbg('applySchedule title', tostring(title), 'color', tostring(concreteColor), 'entries', #routeEntries)
   local sched = buildCreateSchedule(routeEntries, title, concreteColor)
+  dbg('built schedule entries', #sched.entries)
   return A.applyScheduleToStation(yardStation, sched)
 end
 

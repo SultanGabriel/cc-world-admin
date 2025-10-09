@@ -111,7 +111,9 @@ function Popup.open(rootFrame, idx, state, onSave)
       local v = speedStep.get()
       local loops = math.max(1, math.floor(loopsStep.get()))
       local wait = math.max(0, math.floor(waitStep.get()))
-      local routeId = routeSel.get()
+      local routeId = routeSel.get and routeSel.get() or nil
+      print(('[popup] save slot %d: speed=%s loops=%s wait=%s route=%s')
+        :format(idx, tostring(v), tostring(loops), tostring(wait), tostring(routeId)))
       if onSave then onSave({ speed = v, loops_before_yard = loops, yard_wait = wait, routeId = routeId }) end
       box:destroy(); overlay:destroy()
     end)
