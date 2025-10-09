@@ -5,7 +5,7 @@
 
 local config = {
 	MONITOR_MAIN = "monitor_28", -- e.g. "monitor_21" or nil to auto-pick first
-	REDSTONE_SIDE = "back", -- the bundled side wired to 6 colors
+	REDSTONE_SIDE = "top", -- the bundled side wired to 6 colors
 	TICK_INTERVAL = 0.25,
 
 	DEV = { enabled = false, force_present_slots = {} },
@@ -19,9 +19,9 @@ local config = {
 			enabled = true,
 			name = "Trainyard #1",
 			type = "pax",
-			link_color = "blue",
+			link_color = "red",
 			station_peripheral = "Create_Station_1",
-			train_id = "The Snake Express",
+			train_id = "The Snail Express",
 			routeId = "Inner",
 			default_speed = 0.9,
 			loops_before_yard = 4,

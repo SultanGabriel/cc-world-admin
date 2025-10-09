@@ -107,13 +107,13 @@ local function buildRouteEntries(B, slotIdx, yardName)
   local throttle = clamp(round(speed * 100), 5, 100)
 
   local entries = {}
+  table.insert(entries, { dest = yardName, waitSeconds = math.max(0, tonumber(sc.yard_wait or 0)), throttle = throttle, yard = true })
   for _ = 1, loops do
     for _, leg in ipairs(route) do
       local wait = tonumber(leg.wait or 1)
       table.insert(entries, { dest = leg.name, waitSeconds = wait, throttle = throttle, yard = false })
     end
   end
-  table.insert(entries, { dest = yardName, waitSeconds = math.max(0, tonumber(sc.yard_wait or 0)), throttle = throttle, yard = true })
   return entries
 end
 
