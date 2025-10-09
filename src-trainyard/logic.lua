@@ -78,14 +78,24 @@ local function initRedIO(conf, B)
   for i = 1, 6 do
     local slot = conf.SLOTS[i]
     if slot and slot.link_color and C[slot.link_color] then
-      outputs[("stop_slot%d"):format(i)] = { side = conf.REDSTONE_SIDE, mode = "output", bundled = C[slot.link_color] }
+      local key = ("stop_slot%d"):format(i)
+      local mask = C[slot.link_color]
+      print(('[redio] bind %s -> side=%s color=%s(%d)')
+        :format(key, tostring(conf.REDSTONE_SIDE), slot.link_color, mask))
+      outputs[key] = { side = conf.REDSTONE_SIDE, mode = "output", bundled = mask }
     end
   end
-  if type(_G.redstone) ~= "table" then
+  if type(rawget(_G, "redstone")) ~= "table" then
     -- Sandbox: no redstone peripheral available -- fixme this works in sandbox
     return { dummy = true }
   end
-  return RedIO.new(conf.REDSTONE_SIDE, B, outputs)
+  local r = RedIO.new(conf.REDSTONE_SIDE, B, outputs)
+  if r and r.registerOutputChangeCallback then
+    r:registerOutputChangeCallback(function(name, val)
+      print('[redio] state -> hw', name, val and 'ON' or 'OFF')
+    end)
+  end
+  return r
 end
 
 function M.init(conf, B)
@@ -109,13 +119,13 @@ local function buildRouteEntries(B, slotIdx, yardName)
   local throttle = clamp(round(speed * 100), 5, 100)
 
   local entries = {}
-  table.insert(entries, { dest = yardName, waitSeconds = math.max(0, tonumber(sc.yard_wait or 0)), throttle = throttle, yard = true })
   for _ = 1, loops do
     for _, leg in ipairs(route) do
       local wait = tonumber(leg.wait or 1)
       table.insert(entries, { dest = leg.name, waitSeconds = wait, throttle = throttle, yard = false })
     end
   end
+  table.insert(entries, { dest = yardName, waitSeconds = math.max(0, tonumber(sc.yard_wait or 0)), throttle = throttle, yard = true })
   return entries
 end
 
@@ -196,20 +206,28 @@ function M.tick()
     obj.mismatch = present and slotConf.train_id ~= nil and trainName ~= slotConf.train_id or false
 
     if present and obj.awaiting then
-      if obj.mismatch then
+      if obj.pushed then
+        -- Already pushed this cycle, wait for RUN to clear awaiting
+        obj.status = obj.status or "awaiting release"
+      elseif obj.mismatch then
         obj.status = "awaiting update (mismatch)"
       elseif obj.enabled then
         local yardName = st and st.getStationName and st.getStationName() or (slotConf.name or ("Trainyard #" .. i))
         local entries = buildRouteEntries(B, i, yardName)
         local okPush, err
         if st then
-          local concreteColor = slotConf.link_color or "red" -- default safety
+          local concreteColor = slotConf.link_color or "black" -- default safety
           print(('[logic] pushing schedule slot %d; present train=%s mismatch=%s entries=%d')
             :format(i, tostring(trainName), tostring(obj.mismatch), #entries))
           okPush, err = adapter.applySchedule(entries, (slotConf.name or ("Trainyard #" .. i)), st, concreteColor)
         else
-          -- DEV: pretend schedule was applied successfully
-          okPush, err = true, nil
+          -- Only pretend success in DEV; otherwise keep awaiting
+          local devOk = M.conf.DEV and M.conf.DEV.enabled
+          if devOk then
+            okPush, err = true, nil
+          else
+            okPush, err = false, "No station peripheral"
+          end
         end
         if okPush then
           obj.status = "awaiting release"
