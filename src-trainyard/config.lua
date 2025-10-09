@@ -41,7 +41,20 @@ local config = {
                         yard_wait = 20,
                 },
                 [3] = { enabled = false, name = 'Trainyard #3', station_peripheral = 'Create_Station_3' },
-                [4] = { enabled = false, name = 'Trainyard #4', station_peripheral = 'Create_Station_4' },
+                --[4] = { enabled = false, name = 'Trainyard #4', station_peripheral = 'Create_Station_4' },
+
+                [4] = {
+                        enabled = true,
+                        name = 'Trainyard #4',
+                        type = 'pax',
+                        link_color = 'pink',
+                        station_peripheral = 'Create_Station_4',
+                        train_id = 'Ruginel',
+                        routeId = 'Outer',
+                        default_speed = 0.6,
+                        loops_before_yard = 4,
+                        yard_wait = 60,
+                },
                 [5] = { enabled = false, name = 'Trainyard #5', station_peripheral = 'Create_Station_5' },
                 [6] = { enabled = false, name = 'Trainyard #6', station_peripheral = 'Create_Station_6' },
         },
@@ -66,6 +79,7 @@ local config = {
         },
 }
 
+<<<<<<< Updated upstream
 -- Derive RedstoneOutput mapping like the main project: logical keys -> bundled outputs
 -- Keys match state names used by logic (stop_slot1..stop_slot6)
 config.RedstoneOutput = {}
@@ -82,3 +96,6 @@ for i = 1, 6 do
 end
 
 return config
+=======
+return config
+>>>>>>> Stashed changes
