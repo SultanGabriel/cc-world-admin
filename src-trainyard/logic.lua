@@ -76,26 +76,31 @@ end
 local function initRedIO(conf, B)
   -- Prefer explicit mapping from config if provided (parity with main project)
   local outputs = conf.RedstoneOutput or {}
-  if not outputs or next(outputs) == nil then -- i  am pretty positive this is not needed
-    outputs = {}
-    for i = 1, 6 do
-      local slot = conf.SLOTS[i]
-      if slot and slot.link_color and C[slot.link_color] then
-        local key = ("stop_slot%d"):format(i)
-        local mask = C[slot.link_color]
-        outputs[key] = { side = conf.REDSTONE_SIDE, mode = "output", bundled = mask }
-      end
-    end
-  end
+  -- if not outputs or next(outputs) == nil then -- i  am pretty positive this is not needed
+  --   outputs = {}
+  --   for i = 1, 6 do
+  --     local slot = conf.SLOTS[i]
+  --     if slot and slot.link_color and C[slot.link_color] then
+  --       local key = ("stop_slot%d"):format(i)
+  --       local mask = C[slot.link_color]
+  --       outputs[key] = { side = conf.REDSTONE_SIDE, mode = "output", bundled = mask }
+  --     end
+  --   end
+  -- end
   for name, cfg in pairs(outputs) do
     print(('[redio] bind %s -> side=%s bundled=%s')
       :format(name, tostring(cfg.side), tostring(cfg.bundled)))
   end
+
   if type(rawget(_G, "redstone")) ~= "table" then
     -- Sandbox: no redstone peripheral available -- fixme this works in sandbox
     return { dummy = true }
   end
-  local r = RedIO.new(conf.REDSTONE_SIDE, B, outputs)
+
+  local rperf = peripheral.wrap("tm_rsPort_0")
+
+  --local r = RedIO.new(conf.REDSTONE_SIDE, B, outputs)
+  local r = RedIO.new(rperf, B, outputs)
   if r and r.registerOutputChangeCallback then
     r:registerOutputChangeCallback(function(name, val)
       print('[redio] state -> hw', name, val and 'ON' or 'OFF')
@@ -125,13 +130,15 @@ local function buildRouteEntries(B, slotIdx, yardName)
   local throttle = clamp(round(speed * 100), 5, 100)
 
   local entries = {}
+  -- insert yard entry first !very important
+  table.insert(entries, { dest = yardName, waitSeconds = math.max(0, tonumber(sc.yard_wait or 0)), throttle = throttle, yard = true })
+
   for _ = 1, loops do
     for _, leg in ipairs(route) do
       local wait = tonumber(leg.wait or 1)
       table.insert(entries, { dest = leg.name, waitSeconds = wait, throttle = throttle, yard = false })
     end
   end
-  table.insert(entries, { dest = yardName, waitSeconds = math.max(0, tonumber(sc.yard_wait or 0)), throttle = throttle, yard = true })
   return entries
 end
 

@@ -3,16 +3,17 @@
 -- - ROUTES map routeId -> list of Create Station names in the world
 -- - Only 6 yard stations are wrapped; presence via station:isTrainPresent()
 
-local DEF_WAIT = 60
+local DEF_WAIT = 30
 local config = {
         MONITOR_MAIN = 'monitor_28', -- e.g. "monitor_21" or nil to auto-pick first
-        REDSTONE_SIDE = 'top', -- the bundled side wired to 6 colors
+        --REDSTONE_SIDE = 'top', -- the bundled side wired to 6 colors
+        REDSTONE_SIDE = 'west', -- the bundled side wired to 6 colors
         TICK_INTERVAL = 0.25,
 
         DEV = { enabled = false, force_present_slots = {} },
 
         DEFAULT_LOOPS = 4,
-        DEFAULT_YARD_WAIT = 20,
+        DEFAULT_YARD_WAIT = 120,
 
         -- 6 yard lines; unset -> enabled=false
         SLOTS = {
@@ -29,7 +30,7 @@ local config = {
                         yard_wait = 20,
                 },
                 [2] = {
-                        enabled = true,
+                        enabled = false,
                         name = 'Trainyard #2',
                         type = 'pax',
                         link_color = 'green',
@@ -64,7 +65,7 @@ local config = {
                 -- Inner loop with swapped cardinal directions (N<->S, E<->W)
                 -- Update these station names to your exact world names as needed.
                 Inner = {
-                        { name = 'Create/Power Temp (N)', wait = DEF_WAIT },
+                        { name = 'Binj Central (N)', wait = DEF_WAIT },
                         { name = 'Village Temp (E)',      wait = DEF_WAIT },
                         { name = 'Magic Temp (S)',        wait = DEF_WAIT },
                         { name = 'Baza (S)',              wait = DEF_WAIT },
@@ -74,12 +75,11 @@ local config = {
                         { name = 'GT Temp (E)',           wait = DEF_WAIT },
                         { name = 'Magic Temp (N)',        wait = DEF_WAIT },
                         { name = 'Village Temp (W)',      wait = DEF_WAIT },
-                        { name = 'Create/Power Temp (S)', wait = DEF_WAIT },
+                        { name = 'Binj Central (S)', wait = DEF_WAIT },
                 },
         },
 }
 
-<<<<<<< Updated upstream
 -- Derive RedstoneOutput mapping like the main project: logical keys -> bundled outputs
 -- Keys match state names used by logic (stop_slot1..stop_slot6)
 config.RedstoneOutput = {}
@@ -96,6 +96,3 @@ for i = 1, 6 do
 end
 
 return config
-=======
-return config
->>>>>>> Stashed changes

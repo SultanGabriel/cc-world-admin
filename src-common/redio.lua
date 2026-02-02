@@ -117,7 +117,8 @@ end
 function RedIO:_writeRedstone(cfg, value)
 	if DEBUG_LOGS then
 		print('[RedIO] Writing redstone output for side ' ..
-			cfg.side .. ', value: ' .. tostring(value))
+			cfg.side .. ', value: ' .. tostring(value) .. ', bundled: ' ..tostring(cfg.bundled))
+
 	end
 	if cfg.bundled then
 		local cur = self.peripheral.getBundledOutput(cfg.side)

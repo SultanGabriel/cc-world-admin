@@ -55,7 +55,7 @@ local function buildCreateSchedule(entries, title, concreteColor)
             { count = 1, id = "railways:red_conductor_cap" },
             { count = 1, id = concreteId },
           },
-          inverted = 0,
+          inverted = 1,
         },
       }
       dbg('yard conditions: delay', delayCond.data.value, 'link', linkCond.data.frequency[2].id)
