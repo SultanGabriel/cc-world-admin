@@ -33,3 +33,11 @@ CNVD:
  - 'side': GregAdmin shit before it got merged
  - 'old': WorldAdmin before being overwritten by 'side'
 
+
+
+#### 
+- Inside Castel
+- Main Path Spawn
+- Binj Main Path
+- Blood Magic Temple
+
