@@ -1,0 +1,260 @@
+local adapter = require("adapter")
+local RedIO = require("redio")
+
+local M = { conf = nil, B = nil, redio = nil }
+
+local C = _G.colors 
+
+-- Internal cache: map slot index -> yard station peripheral
+local stationBySlot = {}   -- [i] = peripheral
+-- Discovery deprecated: we bind directly from config (slot.station_peripheral)
+
+local function round(x) return math.floor(x + 0.5) end
+local function clamp(x, a, b) return math.max(a, math.min(b, x)) end
+
+-- Helpers for object-based slot state
+local function slotKey(i) return ("SLOT_%d"):format(i) end
+local function getSlot(B, i)
+  return B:getState(slotKey(i)) or {}
+end
+local function setSlot(B, i, obj)
+  B:setState(slotKey(i), obj)
+end
+local function patchSlot(B, i, patch)
+  local obj = getSlot(B, i)
+  for k, v in pairs(patch) do obj[k] = v end
+  setSlot(B, i, obj)
+end
+
+-- NOTE: discoverStations deprecated; stations are provided via config only
+
+local function bindSlotsToStations(B)
+  -- Bind directly from config: slot.station_peripheral (explicit)
+  local SLOTS = B:getState("slots") or {}
+  for i = 1, 6 do
+    local slot = SLOTS[i]
+    if slot then
+      if slot.station_peripheral and _G.peripheral and peripheral.wrap then
+        local ok, per = pcall(peripheral.wrap, slot.station_peripheral)
+        stationBySlot[i] = ok and per or nil
+      else
+        stationBySlot[i] = nil
+      end
+    else
+      stationBySlot[i] = nil
+    end
+  end
+end
+
+local function initStates(conf, B)
+  for i = 1, 6 do
+    local slot = conf.SLOTS[i] or {}
+    local enabled = slot.enabled == true
+    local initial = {
+      enabled = enabled,
+      name = slot.name or ("Slot " .. i),
+      type = slot.type,
+      routeId = slot.routeId,
+      status = enabled and "idle" or "inactive",
+      awaiting = false,
+      present = false,
+      mismatch = false,
+      trainName = nil,
+      pushed = false,
+      sched = {
+        speed = slot.default_speed or 1.0,
+        loops_before_yard = slot.loops_before_yard or conf.DEFAULT_LOOPS,
+        yard_wait = slot.yard_wait or conf.DEFAULT_YARD_WAIT,
+      },
+    }
+    B:initializeState(slotKey(i), initial)
+    -- keep RedIO compatibility; initialize stop bit even for disabled to avoid missing state
+    B:initializeState(("stop_slot%d"):format(i), false)
+  end
+end
+
+local function initRedIO(conf, B)
+  -- Prefer explicit mapping from config if provided (parity with main project)
+  local outputs = conf.RedstoneOutput or {}
+  if not outputs or next(outputs) == nil then -- i  am pretty positive this is not needed
+    outputs = {}
+    for i = 1, 6 do
+      local slot = conf.SLOTS[i]
+      if slot and slot.link_color and C[slot.link_color] then
+        local key = ("stop_slot%d"):format(i)
+        local mask = C[slot.link_color]
+        outputs[key] = { side = conf.REDSTONE_SIDE, mode = "output", bundled = mask }
+      end
+    end
+  end
+  for name, cfg in pairs(outputs) do
+    print(('[redio] bind %s -> side=%s bundled=%s')
+      :format(name, tostring(cfg.side), tostring(cfg.bundled)))
+  end
+  if type(rawget(_G, "redstone")) ~= "table" then
+    -- Sandbox: no redstone peripheral available -- fixme this works in sandbox
+    return { dummy = true }
+  end
+  local r = RedIO.new(conf.REDSTONE_SIDE, B, outputs)
+  if r and r.registerOutputChangeCallback then
+    r:registerOutputChangeCallback(function(name, val)
+      print('[redio] state -> hw', name, val and 'ON' or 'OFF')
+    end)
+  end
+  return r
+end
+
+function M.init(conf, B)
+  M.conf, M.B = conf, B
+  initStates(conf, B)
+  M.redio = initRedIO(conf, B)
+  bindSlotsToStations(B)
+end
+
+local function buildRouteEntries(B, slotIdx, yardName)
+  local conf = M.conf
+  local slot = conf.SLOTS[slotIdx]
+  local slotObj = getSlot(B, slotIdx)
+  local sc = slotObj.sched or {}
+  local routeId = slotObj.routeId or slot.routeId
+  local route = conf.ROUTES[routeId]
+  assert(route and #route > 0, "Unknown or empty routeId: " .. tostring(routeId))
+
+  local loops = math.max(1, tonumber(sc.loops_before_yard or conf.DEFAULT_LOOPS))
+  local speed = clamp(tonumber(sc.speed or slot.default_speed or 1.0), 0.1, 1.0)
+  local throttle = clamp(round(speed * 100), 5, 100)
+
+  local entries = {}
+  for _ = 1, loops do
+    for _, leg in ipairs(route) do
+      local wait = tonumber(leg.wait or 1)
+      table.insert(entries, { dest = leg.name, waitSeconds = wait, throttle = throttle, yard = false })
+    end
+  end
+  table.insert(entries, { dest = yardName, waitSeconds = math.max(0, tonumber(sc.yard_wait or 0)), throttle = throttle, yard = true })
+  return entries
+end
+
+-- UI interaction: Save schedule and assert STOP via state (RedIO binding handles hardware)
+function M.updateSlotConfig(idx, newCfg)
+  local B, conf = M.B, M.conf
+  local obj = getSlot(B, idx)
+  local old = obj.sched or {}
+  print(('[logic] updateSlotConfig slot %d: speed=%s loops=%s yard_wait=%s routeId=%s')
+    :format(idx, tostring(newCfg.speed), tostring(newCfg.loops_before_yard), tostring(newCfg.yard_wait), tostring(newCfg.routeId)))
+  obj.sched = {
+    speed = clamp(tonumber(newCfg.speed) or old.speed or 1.0, 0.1, 1.0),
+    loops_before_yard = math.max(1, math.floor(tonumber(newCfg.loops_before_yard) or old.loops_before_yard or conf.DEFAULT_LOOPS)),
+    yard_wait = math.max(0, math.floor(tonumber(newCfg.yard_wait) or old.yard_wait or conf.DEFAULT_YARD_WAIT)),
+  }
+  if newCfg.routeId then obj.routeId = newCfg.routeId end
+  obj.awaiting = true
+  obj.status = "awaiting update"
+  setSlot(B, idx, obj)
+  B:setState(("stop_slot%d"):format(idx), true) -- assert STOP
+end
+
+function M.releaseTrain(idx)
+  local B = M.B
+  local obj = getSlot(B, idx)
+  print('[logic] RUN (release) slot', idx)
+  B:setState(("stop_slot%d"):format(idx), false)
+  if obj.pushed then
+    obj.awaiting = false
+    obj.status = "running"
+    obj.pushed = false
+  else
+    obj.status = "released (no update)"
+  end
+  setSlot(B, idx, obj)
+end
+
+function M.holdTrain(idx)
+  local B = M.B
+  local obj = getSlot(B, idx)
+  print('[logic] STOP (hold) slot', idx)
+  B:setState(("stop_slot%d"):format(idx), true)
+  obj.status = "held"
+  setSlot(B, idx, obj)
+end
+
+-- Called every tick: detect presence/mismatch; when awaiting+present apply schedule
+function M.tick()
+  local B = M.B
+  for i = 1, 6 do
+    local slotConf = M.conf.SLOTS[i] or {}
+    local obj = getSlot(B, i)
+
+    local st = stationBySlot[i]
+    if not st then
+      bindSlotsToStations(B)
+      st = stationBySlot[i]
+    end
+
+    local present, trainName = false, nil
+    if st then
+      local okP, resP = pcall(st.isTrainPresent)
+      if okP then present = resP == true end
+      if present then
+        local okN, resN = pcall(st.getTrainName)
+        if okN then trainName = resN end
+      end
+    end
+
+    -- DEV sandbox: force presence for slots
+    if M.conf.DEV and M.conf.DEV.enabled then
+      local forced = M.conf.DEV.force_present_slots and M.conf.DEV.force_present_slots[i]
+      if forced then present = true; trainName = trainName or (slotConf.train_id or ("DEV_TRAIN_" .. i)) end
+    end
+
+    obj.present = present
+    obj.trainName = trainName
+    obj.mismatch = present and slotConf.train_id ~= nil and trainName ~= slotConf.train_id or false
+
+    if present and obj.awaiting then
+      if obj.pushed then
+        -- Already pushed this cycle, wait for RUN to clear awaiting
+        obj.status = obj.status or "awaiting release"
+      elseif obj.mismatch then
+        obj.status = "awaiting update (mismatch)"
+      elseif obj.enabled then
+        local yardName = st and st.getStationName and st.getStationName() or (slotConf.name or ("Trainyard #" .. i))
+        local entries = buildRouteEntries(B, i, yardName)
+        local okPush, err
+        if st then
+          local concreteColor = slotConf.link_color or "black" -- default safety
+          print(('[logic] pushing schedule slot %d; present train=%s mismatch=%s entries=%d')
+            :format(i, tostring(trainName), tostring(obj.mismatch), #entries))
+          okPush, err = adapter.applySchedule(entries, (slotConf.name or ("Trainyard #" .. i)), st, concreteColor)
+        else
+          -- Only pretend success in DEV; otherwise keep awaiting
+          local devOk = M.conf.DEV and M.conf.DEV.enabled
+          if devOk then
+            okPush, err = true, nil
+          else
+            okPush, err = false, "No station peripheral"
+          end
+        end
+        if okPush then
+          obj.status = "awaiting release"
+          obj.pushed = true
+        else
+          B:setState("last_error", tostring(err))
+          print('[logic] push failed slot', i, tostring(err))
+          obj.status = "push failed"
+        end
+      else
+        obj.status = "awaiting update (inactive)"
+      end
+    end
+
+    -- If disabled, keep status 'inactive' unless an awaiting status overrode it above
+    if not obj.enabled and not obj.awaiting then
+      obj.status = "inactive"
+    end
+
+    setSlot(B, i, obj)
+  end
+end
+
+return M

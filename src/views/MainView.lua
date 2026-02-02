@@ -175,7 +175,7 @@ function MainView.new(B, state)
 
 	-- === Indicator Panel === --
 	local fIndicatorPanel = ExperimentalFrame.new(B, realW - sideW, 3,
-												  sideW - 4, realH - 4)
+												  sideW - 0, realH - 1)
 	if not FEATUREFLAG_INDICATORS then
 		print('[MainView] new() - Indicators feature disabled.')
 	else
