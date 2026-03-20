@@ -6,6 +6,11 @@ local MainView = {}
 MainView.__index = MainView
 setmetatable(MainView, { __index = Component })
 
+local function getMouseButton(...)
+    local args = { ... }
+    return args[3] or args[2]
+end
+
 function MainView.new(B, state)
     local self = setmetatable(Component.new(), MainView)
     self.state = state
@@ -60,8 +65,7 @@ function MainView.new(B, state)
     })
 
     button:onClick(function(...)
-        local args = { ... }
-        local mouseButton = args[3] or args[2]
+        local mouseButton = getMouseButton(...)
         if mouseButton ~= 2 then
             return
         end

@@ -3,8 +3,8 @@ local RedIO = require('redio')
 local M = {
     conf = nil,
     state = nil,
-    redIn = nil,
-    redOut = nil,
+    redstoneInput = nil,
+    redstoneOutput = nil,
 }
 
 local function hasRedstone()
@@ -19,8 +19,8 @@ function M.init(conf, state)
         return
     end
 
-    M.redIn = RedIO.new(conf.REDSTONE_SIDE, state, conf.RedstoneInput or {})
-    M.redOut = RedIO.new(conf.REDSTONE_SIDE, state, conf.RedstoneOutput or {})
+    M.redstoneInput = RedIO.new(conf.REDSTONE_SIDE, state, conf.RedstoneInput or {})
+    M.redstoneOutput = RedIO.new(conf.REDSTONE_SIDE, state, conf.RedstoneOutput or {})
 end
 
 function M.handleRightClick()
@@ -34,8 +34,8 @@ function M.handleRightClick()
 end
 
 function M.tick()
-    if M.redIn ~= nil then
-        M.redIn:pollInputs()
+    if M.redstoneInput ~= nil then
+        M.redstoneInput:pollInputs()
     end
 end
 

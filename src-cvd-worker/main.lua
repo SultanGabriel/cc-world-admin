@@ -43,7 +43,7 @@ local function init()
         while true do
             logic.tick()
             view:update()
-            if _G.os and os.sleep then os.sleep(CONF.TICK_INTERVAL or 0.25) else sleep(CONF.TICK_INTERVAL or 0.25) end
+            sleep(CONF.TICK_INTERVAL or 0.25)
         end
     end)
 
